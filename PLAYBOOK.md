@@ -12,7 +12,7 @@
 
 ## A. 新项目怎么开始
 
-1. 复制 [project-base](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/project-base) 到新的项目目录
+1. 复制 [`project-base/`](./project-base) 到新的项目目录
 2. 打开新项目目录
 3. 先不要写代码
 4. 先让网页大语言模型把项目收敛到 `TASK-001`
@@ -117,12 +117,16 @@
    - In Scope
    - Out of Scope
    - Constraints
+   - Task Source
+   - Execution Split
    - Files Involved
    - Done when
    - Plan
    - Verify
    - Review Focus
    - Blocked By
+   - Outcome
+   - Notes for Next Task
    - Status
 4. 完成后明确输出：Ready for Execute
 ```

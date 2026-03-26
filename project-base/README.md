@@ -23,12 +23,16 @@
 ## 复制出去之后要做什么
 
 1. 把这个目录重命名成你的项目名
-2. 按 `PLAYBOOK.md` 先补齐：
+2. 先用网页大语言模型补齐：
    - `SPEC.md`
    - `DECISIONS.md`
    - `BUILD_PLAN.md`
    - `specs/TASK-001.md`
-3. 再把真实代码目录加进来，例如：
+3. 进入 coding agent 阶段后，再执行当前任务卡并完成：
+   - `Verify / Review`
+   - `Sync`
+   - `Next Task Draft`
+4. 再把真实代码目录加进来，例如：
    - `src/`
    - `app/`
    - `components/`
@@ -36,6 +40,8 @@
    - `prisma/`
    - `package.json`
    - `.env.example`
+
+如果你是从模板仓库复制出来的，网页模型与 coding agent 的推荐话术可参考仓库根目录的 `PLAYBOOK.md`。
 
 ---
 

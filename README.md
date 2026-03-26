@@ -1,4 +1,4 @@
-# OneMore_vibe-coding_v0.2
+# OneMore_vibe-coding_v0.3
 
 一个最小化的 `vibe coding` 模板仓库。
 
@@ -12,7 +12,7 @@
 ## 最终结构
 
 ```text
-OneMore_vibe-coding_v0.2/
+OneMore_vibe-coding_v0.3/
 ├── README.md
 ├── PLAYBOOK.md
 ├── project-base/
@@ -68,7 +68,7 @@ OneMore_vibe-coding_v0.2/
 
 因为它们对模板仓库有用，但对真实项目过重，而且会和 `project-base/` 重复。
 
-`v0.2` 现在采用的原则是：
+`v0.3` 现在采用的原则是：
 
 - 操作手册集中到 `PLAYBOOK.md`
 - 项目骨架集中到 `project-base/`
@@ -83,7 +83,7 @@ OneMore_vibe-coding_v0.2/
 
 把下面这个目录复制出去：
 
-- [project-base](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/project-base)
+- [`project-base/`](./project-base)
 
 复制后重命名成你的新项目目录。
 
@@ -149,13 +149,13 @@ OneMore_vibe-coding_v0.2/
 
 参考：
 
-- [personal-blog.md](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/examples/personal-blog.md)
+- [`examples/personal-blog.md`](./examples/personal-blog.md)
 
 ---
 
 ## 版本说明
 
-当前版本：`v0.2`
+当前版本：`v0.3`
 
 这个版本的目标是：
 

@@ -1,4 +1,4 @@
-# 示例：个人 Blog 如何使用 v0.2
+# 示例：个人 Blog 如何使用 v0.3
 
 ## 场景
 
@@ -17,17 +17,17 @@
 ## 先做什么
 
 1. 从模板仓库复制：
-   - [project-base](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/project-base)
+   - [`project-base/`](../project-base)
 2. 把复制后的目录命名成你的 blog 项目
 3. 打开：
-   - [PLAYBOOK.md](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/PLAYBOOK.md)
+   - [`PLAYBOOK.md`](../PLAYBOOK.md)
 4. 按里面的步骤推进
 
 ---
 
 ## 阶段 A：网页大语言模型
 
-这一阶段直接照 [PLAYBOOK.md](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/PLAYBOOK.md) 的 B 段执行即可。
+这一阶段直接照 [`PLAYBOOK.md`](../PLAYBOOK.md) 的 B 段执行即可。
 
 你的目标是产出：
 
@@ -40,7 +40,7 @@
 
 ## 阶段 B：切到 Coding Agent
 
-这一阶段直接照 [PLAYBOOK.md](/Users/wangxu/Downloads/OneMore_vibe-coding_模板/OneMore_vibe-coding_v0.2/PLAYBOOK.md) 的 C 段执行即可。
+这一阶段直接照 [`PLAYBOOK.md`](../PLAYBOOK.md) 的 C 段执行即可。
 
 你的目标是：
 
