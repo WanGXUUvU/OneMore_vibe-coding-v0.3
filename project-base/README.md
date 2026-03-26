@@ -14,6 +14,7 @@
 - `BUILD_PLAN.md`
 - `STATUS.md`
 - `WORKSTREAMS.md`
+- `.gitignore`
 - `specs/TASK-001.md`
 
 这些文件是流程骨架，不是业务代码。
@@ -59,6 +60,8 @@
   记录当前阶段和下一步
 - `WORKSTREAMS.md`
   在多代理模式下记录并行切分、文件所有权和协调方式
+- `.gitignore`
+  提供一个最小的项目忽略规则起点
 - `specs/TASK-001.md`
   记录当前这一轮只做什么
 

@@ -9,6 +9,19 @@
 
 ---
 
+## Quick Start
+
+1. 复制 [`project-base/`](./project-base) 到你的新项目目录
+2. 打开 [`PLAYBOOK.md`](./PLAYBOOK.md)
+3. 先用网页大语言模型补齐：
+   - `SPEC.md`
+   - `DECISIONS.md`
+   - `BUILD_PLAN.md`
+   - `specs/TASK-001.md`
+4. 再切到 `Codex / Claude Code` 执行当前任务卡
+
+---
+
 ## 最终结构
 
 ```text
@@ -22,6 +35,7 @@ OneMore_vibe-coding_v0.3/
 │   ├── BUILD_PLAN.md
 │   ├── STATUS.md
 │   ├── WORKSTREAMS.md
+│   ├── .gitignore
 │   ├── README.md
 │   └── specs/
 │       └── TASK-001.md
@@ -155,10 +169,11 @@ OneMore_vibe-coding_v0.3/
 
 ## 版本说明
 
-当前版本：`v0.3`
+当前版本：`v0.3.1`
 
 这个版本的目标是：
 
 - 模板仓库尽量轻
 - 真实项目地基可直接复制
 - 网页模型与 coding agent 的边界明确
+- 单代理与多代理两种执行方式都可直接落地

@@ -139,7 +139,7 @@
 
 ### 1. 执行当前任务卡
 
-发给 coding agent：
+单代理模式直接使用下面这段标准话术：
 
 ```md
 请读取：
@@ -149,30 +149,6 @@
 - `BUILD_PLAN.md`
 - `STATUS.md`
 - 当前 `specs/TASK-xxx.md`
-
-现在只执行当前任务卡。
-
-要求：
-1. 先输出 Plan，不要直接改代码
-2. Plan 至少包含：
-   - 本轮目标
-   - 涉及文件
-   - 实现步骤
-   - 风险点
-   - 验证方式
-3. 未经说明，不要跨任务卡或跨里程碑
-```
-
-标准单代理话术：
-
-```md
-请读取：
-- `AGENTS.md`
-- `SPEC.md`
-- `DECISIONS.md`
-- `BUILD_PLAN.md`
-- `STATUS.md`
-- `specs/TASK-001.md`
 
 现在使用 Single Agent 模式执行当前任务。
 
@@ -187,7 +163,7 @@
 3. 未经说明，不要跨任务卡或跨里程碑
 4. 完成后输出 `Verify / Review`
 5. 最后同步更新：
-   - `specs/TASK-001.md`
+   - 当前 `specs/TASK-xxx.md`
    - `BUILD_PLAN.md`
    - `STATUS.md`
 6. 如果满足 `Ready for Next Task`，请生成下一张任务卡草案，但不要执行
@@ -207,38 +183,7 @@
 
 ### 1.2 多代理模式怎么开
 
-先由主控 agent 读取：
-
-- `AGENTS.md`
-- `SPEC.md`
-- `DECISIONS.md`
-- `BUILD_PLAN.md`
-- `STATUS.md`
-- 当前 `specs/TASK-xxx.md`
-- `WORKSTREAMS.md`
-
-然后发给 coding agent：
-
-```md
-请使用 Multi-agent / Subagent 模式执行当前任务。
-
-要求：
-1. 先不要写代码，先给出并行切分方案
-2. 先更新 `WORKSTREAMS.md`
-3. 必须明确：
-   - Coordinator 负责什么
-   - 哪些子任务可以并行
-   - 每个 subagent 的文件所有权
-   - 哪些工作必须由主控整合
-4. 不允许两个 subagent 修改同一组文件
-5. 完成切分后，再分别执行：
-   - 只读探索
-   - 实现
-   - 验证 / Review
-6. 最终仍由主控 agent 输出 Verify / Review / Sync / Next Task Draft
-```
-
-标准多代理话术：
+如果满足上面的切换条件，直接使用下面这段标准多代理话术：
 
 ```md
 请读取：
@@ -248,7 +193,7 @@
 - `BUILD_PLAN.md`
 - `STATUS.md`
 - `WORKSTREAMS.md`
-- `specs/TASK-001.md`
+- 当前 `specs/TASK-xxx.md`
 
 现在使用 Multi-agent / Subagent 模式执行当前任务。
 
