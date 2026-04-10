@@ -1,0 +1,37 @@
+# Regression Eval 示例
+# 验证已有功能在新变更后仍然正常
+# 每次 TASK 闭环后运行，检测回归
+
+eval:
+  name: "core-regression"
+  type: regression
+  description: "核心功能回归测试套件"
+  run_after: "every-task"  # every-task | every-milestone | manual
+
+trials:
+  - name: "project-builds"
+    grader: correctness
+    command: "npm run build"
+    expected_exit: 0
+    timeout_s: 60
+
+  - name: "tests-pass"
+    grader: correctness
+    command: "npm test -- --passWithNoTests"
+    expected_exit: 0
+    timeout_s: 120
+
+  - name: "lint-clean"
+    grader: style
+    command: "npm run lint"
+    expected_exit: 0
+
+  - name: "no-security-audit-high"
+    grader: security
+    command: "npm audit --audit-level=high"
+    expected_exit: 0
+
+  - name: "docs-consistent"
+    grader: correctness
+    command: "manually verify docs exist and key references are consistent"
+    expected_exit: 0
