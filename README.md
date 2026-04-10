@@ -29,9 +29,21 @@
 请先读取：
 - `AGENTS.md`
 - `STATUS.md`
-- 当前 `specs/TASK-001.md`
+- 当前 `specs/TASK-xxx.md`
 
-确认当前 `Current Phase`、`Current Gate` 和 `TASK-001` 的边界后，再按当前任务卡执行。不要额外探索无关目录、git 状态或上层模板。
+现在使用多子代理 harness 执行当前任务。
+
+主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先更新 `WORKSTREAMS.md`，写清本轮角色分工、输入边界、输出位置、文件所有权和禁止事项，再显式拉起 `planner / generator / evaluator / fixer` 四个角色。
+
+执行时以 TASK 卡 `Required Reads` 为准：
+- `planner` 负责 `Read -> Plan`，只写 TASK 卡 `Plan`
+- `generator` 负责 `Execute`，只改获授权代码与 `Changed Files`
+- `evaluator` 负责 `Verify -> Review`
+- `fixer` 只修 evaluator 明确指出的失败项
+
+`evaluator <-> fixer` 最多循环 3 轮，超过则标记 `Blocked`。不允许两个写入型角色修改同一组文件。最终仍由主控输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`；如果满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不要执行。
+
+确认当前 `Current Phase`、`Current Gate` 和任务边界后，再按当前任务卡执行。不要额外探索无关目录、git 状态或上层模板。
 ```
 
 ---
