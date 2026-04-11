@@ -2,12 +2,13 @@
 
 一个最小化的 vibe coding 模板。复制 `project-base/` 就能开始干活。
 
-这一版保留了 `v1.0` 的分层结构，但把主线重新收回到 `v0.7` 那种更直接的使用方式：
+这一版保留了 `v1.0` 的分层结构，但把默认执行方式改成“按风险分级”，不再把最重流程压到所有任务上：
 
 - 先用网页大模型收敛四份文档
 - 再把当前 TASK 交给 coding agent 执行
 - 一次只推进一个最小闭环
-- 主控在两个 `[HUMAN GATE]` 节点停下等你确认
+- 任务分成 `Fast Lane / Standard Lane / Strict Lane`
+- 只有需要时才启用 `planner`、`fixer` 和 `Plan Review`
 - `extensions/` 只是附加物，不干扰主流程
 
 ---
@@ -33,15 +34,15 @@
 
 现在使用多子代理 harness 执行当前任务。
 
-主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先更新 `WORKSTREAMS.md`，写清本轮角色分工、输入边界、输出位置、文件所有权和禁止事项，再显式拉起 `planner / generator / evaluator / fixer` 四个角色。
+主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先判断本轮适合 `Fast Lane / Standard Lane / Strict Lane` 中哪一档，再决定是否需要 `planner`、是否需要 `Plan Review`、以及是否需要预先创建 `fixer`。
 
 执行时以 TASK 卡 `Required Reads` 为准：
-- `planner` 负责 `Read -> Plan`，只写 TASK 卡 `Plan`
+- `planner` 只在 `Standard / Strict Lane` 默认启用，负责 `Read -> Plan`
 - `generator` 负责 `Execute`，只改获授权代码与 `Changed Files`
 - `evaluator` 负责 `Verify -> Review`
-- `fixer` 只修 evaluator 明确指出的失败项
+- `fixer` 只在 evaluator 明确指出失败项后启用
 
-`evaluator <-> fixer` 最多循环 3 轮，超过则标记 `Blocked`。不允许两个写入型角色修改同一组文件。最终仍由主控输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`；如果满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不要执行。
+`evaluator <-> fixer` 最多循环 3 轮，超过则标记 `Blocked`。不允许两个写入型角色修改同一组文件。同步遵循最小化原则：默认只更新 `TASK` 和 `STATUS.md`，只有里程碑级变化才更新 `BUILD_PLAN.md`。最终仍由主控输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`；如果满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不要执行。
 
 确认当前 `Current Phase`、`Current Gate` 和任务边界后，再按当前任务卡执行。不要额外探索无关目录、git 状态或上层模板。
 ```
@@ -104,18 +105,18 @@ OneMore_vibe-coding_v1.0/
 
 最小闭环就是这条线：
 
-`SPEC → DECISIONS → BUILD_PLAN → TASK → planner → [HUMAN GATE] → generator → evaluator / fixer → [HUMAN GATE] → Sync`
+`SPEC → DECISIONS → BUILD_PLAN → TASK → lane select → generator / planner → evaluator / fixer → [HUMAN GATE] → Sync`
 
-默认按多子代理 harness 执行当前任务。
+默认按 `Standard Lane` 执行，不默认走最重流程。
 
-启动时主控应先按渐进式披露读 L0，先把 `WORKSTREAMS.md` 里的本轮分工和文件边界写清楚，再拉起 `planner / generator / evaluator / fixer` 四个角色。每个角色都以 TASK 卡里的 `Required Reads` 为输入边界，只写自己负责的段落或文件，不重读无关文档，不改不属于自己的内容。
+启动时主控应先按渐进式披露读 L0，先判断当前任务该走哪条车道，再按需创建角色。每个角色都以 TASK 卡里的 `Required Reads` 为输入边界，只写自己负责的段落或文件，不重读无关文档，不改不属于自己的内容。
 
-执行顺序保持不变：`planner` 先把 `Plan` 写回 TASK 卡，`generator` 再实现，`evaluator` 负责 `Verify / Review`，`fixer` 只修 evaluator 点名的问题。`evaluator <-> fixer` 最多循环 3 轮，超过就标记 `Blocked`。任何两个写入型角色都不能同时改同一组文件。
+执行顺序按车道变化：`Fast Lane` 默认 `generator -> evaluator`；`Standard Lane` 默认 `planner -> generator -> evaluator`；`Strict Lane` 再加入 `fixer` 循环。`evaluator <-> fixer` 最多循环 3 轮，超过就标记 `Blocked`。任何两个写入型角色都不能同时改同一组文件。
 
 最终仍由主控负责整理并输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`。如果本轮满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不自动执行。
 
 - 没有 TASK，不编码
-- 没有 Plan，不大改
+- 没有 Plan，不做中高风险改动
 - 没有 Verify / Review，不进入下一轮
 - evaluator 自己根据证据判断，不依赖脚本
 

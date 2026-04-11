@@ -152,10 +152,18 @@
   - `evaluator`
   - `fixer`
 - Run style:
-  - 多子代理协作（默认）
+  - `Fast Lane`：`generator -> evaluator`
+  - `Standard Lane`：`planner -> generator -> evaluator`
+  - `Strict Lane`：`planner -> generator -> evaluator -> fixer -> evaluator`
   - 单代理串行（Fallback）
 - State owner:
   - 主控负责更新 `STATUS.md`、`BUILD_PLAN.md`、`WORKSTREAMS.md` 和下一张 TASK 文件
+
+## Process Policy
+- 默认 `Standard Lane`，不是默认最重流程
+- `fixer` 只在验证失败后启用
+- `BUILD_PLAN.md` 只记录里程碑级变化；小型修复默认只更新 `TASK` 和 `STATUS.md`
+- 验证策略按任务类型选择：UI 优先 Playwright，后端解析优先构建与静态命中，纯文档优先静态检查
 
 ## Progress
 - [x] M1 Not started

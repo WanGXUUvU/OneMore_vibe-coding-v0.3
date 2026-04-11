@@ -25,6 +25,14 @@
 - 如果代码库为空，可标记为 `Bootstrap Task`
 - 如为纯静态页面，自动化浏览器验证默认通过临时本地静态 server 执行，不直接要求 Playwright 访问 `file://`
 
+## Execution Lane
+
+> 主控在开工前选择其一；未说明时默认 `Standard Lane`。
+
+- `Fast Lane`：1 到 2 个文件的小修；不改 API 契约、数据模型、权限、部署、迁移
+- `Standard Lane`：普通功能开发；需要 `Plan Review`
+- `Strict Lane`：高风险任务；涉及协议、权限、迁移、部署或高并行风险
+
 ## Invariants
 - [本轮不能破坏的事实 1]
 - [本轮不能破坏的事实 2]
@@ -33,10 +41,11 @@
 
 | 角色 | 必读 |
 |------|------|
-| planner | `AGENTS.md` + `STATUS.md` + 本卡；按需 `BUILD_PLAN.md` |
+| 主控 | `AGENTS.md` + `STATUS.md` + 本卡；按需 `BUILD_PLAN.md` |
+| planner | 仅在 `Standard / Strict Lane` 默认启用；读本卡与必要上文 |
 | generator | 本卡 `Plan` + [相关源码文件] |
-| evaluator | 本卡 `Done when` + `Changed Files` + `Verify` |
-| fixer | 本卡 `Verify` 失败项 + [具体失败文件] |
+| evaluator | 本卡 `Done when` + `Changed Files` + `Execution Evidence` |
+| fixer | 仅在 `evaluator` 明确指出失败项后启用 |
 
 ## Files Involved
 - [路径 1]
@@ -81,6 +90,7 @@
 ## Verify
 
 > 由 evaluator 填写当前轮结果。
+> 按任务类型选择最小验证模板，不要求所有任务都跑同一套重流程。
 
 - Automated: [自动化验证结果]
 - Manual: [手动验证结果；若 MCP 阻止 `file://`，写明阻断原因与替代证据]
@@ -93,6 +103,7 @@
 - Verdict: [Pass / Fail / Blocked] · Ready for Next Task: [Y/N]
 - Top Risk: [最多 2 条；无则写"无"]
 - Unexpected: [无则写"无"]
+- Lane fit: [本轮所选执行车道是否合适；如不合适，说明应升/降档]
 
 ## Review Focus
 

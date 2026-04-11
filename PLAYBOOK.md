@@ -141,10 +141,48 @@
 
 ## C. Coding Agent 阶段
 
-默认流程：
+先判断当前任务属于哪条车道，再决定流程。
 
+### 1. Fast Lane
+
+适用：
+- 1 到 2 个文件的小修
+- 不改 API 契约、数据模型、权限、部署、迁移
+
+流程：
 1. 主控读取 `AGENTS.md`、`STATUS.md`、当前 `TASK`
-2. 一次性拉起 `planner / generator / evaluator / fixer`
+2. 如 TASK 卡已有足够清晰的 `Plan`，直接放行 `generator`
+3. `generator` 实现
+4. `evaluator` 验证
+5. 到 `[HUMAN GATE] Sync Review`
+6. 主控更新 `TASK / STATUS`
+
+### 2. Standard Lane
+
+适用：
+- 普通功能开发
+- 需要先冻结实现边界，但不属于高风险改动
+
+流程：
+1. 主控读取 `AGENTS.md`、`STATUS.md`、当前 `TASK`
+2. 拉起 `planner`
+3. `planner` 先产出 Plan
+4. 到 `[HUMAN GATE] Plan Review`
+5. `generator` 实现
+6. `evaluator` 验证
+7. 如有失败项，再放行 `fixer`
+8. 到 `[HUMAN GATE] Sync Review`
+9. 主控更新 `TASK / STATUS`，必要时更新 `BUILD_PLAN.md`
+
+### 3. Strict Lane
+
+适用：
+- 改 API 契约、权限、迁移、部署、数据模型
+- 并行写入风险高
+
+流程：
+1. 主控读取 `AGENTS.md`、`STATUS.md`、当前 `TASK`
+2. 拉起 `planner`
 3. `planner` 先产出 Plan
 4. 到 `[HUMAN GATE] Plan Review`
 5. `generator` 实现
@@ -185,15 +223,15 @@
 
 现在使用多子代理 harness 执行当前任务。
 
-主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先更新 `WORKSTREAMS.md`，写清本轮角色分工、输入边界、输出位置、文件所有权和禁止事项，再显式拉起 `planner / generator / evaluator / fixer` 四个角色。
+主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先判断本轮适合 `Fast Lane / Standard Lane / Strict Lane` 中哪一档，再决定是否需要 `planner`、是否需要 `Plan Review`、以及是否需要预先创建 `fixer`。
 
 执行时以 TASK 卡 `Required Reads` 为准：
-- `planner` 负责 `Read -> Plan`，只写 TASK 卡 `Plan`
+- `planner` 只在 `Standard / Strict Lane` 默认启用，负责 `Read -> Plan`
 - `generator` 负责 `Execute`，只改获授权代码与 `Changed Files`
 - `evaluator` 负责 `Verify -> Review`
-- `fixer` 只修 evaluator 明确指出的失败项
+- `fixer` 只在 evaluator 明确指出失败项后启用
 
-`evaluator <-> fixer` 最多循环 3 轮，超过则标记 `Blocked`。不允许两个写入型角色修改同一组文件。最终仍由主控输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`；如果满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不要执行。
+`evaluator <-> fixer` 最多循环 3 轮，超过则标记 `Blocked`。不允许两个写入型角色修改同一组文件。同步遵循最小化原则：默认只更新 `TASK` 和 `STATUS.md`，只有里程碑级变化才更新 `BUILD_PLAN.md`。最终仍由主控输出 `Verify`、`Review`、`Sync` 和 `Next Task Draft`；如果满足 `Ready for Next Task`，由 `planner` 生成下一张任务卡草案，但不要执行。
 
 确认当前 `Current Phase`、`Current Gate` 和任务边界后，再按当前任务卡执行。不要额外探索无关目录、git 状态或上层模板。
 ```
@@ -214,7 +252,7 @@
 - `STATUS.md`
 - 当前 `specs/TASK-xxx.md`
 
-确认当前 `Current Phase`、`Current Gate` 和任务边界后，再按 planner → generator → evaluator → fixer 的顺序串行执行当前任务。不要额外探索无关目录、git 状态或上层模板。
+确认当前 `Current Phase`、`Current Gate` 和任务边界后，先判断本轮属于 `Fast Lane / Standard Lane / Strict Lane` 哪一档，再按对应角色顺序串行执行。不要额外探索无关目录、git 状态或上层模板。
 ```
 
 ### 何时回退到规划层

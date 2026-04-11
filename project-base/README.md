@@ -27,14 +27,18 @@
    - `DECISIONS.md`
    - `BUILD_PLAN.md`
    - `specs/TASK-001.md`
-3. 进入 coding agent 阶段后，主控调度子代理完成：
-   - `planner`：Read → Plan（写入当前 TASK 卡）
+3. 进入 coding agent 阶段后，先判断当前 TASK 属于哪条车道：
+   - `Fast Lane`：小修，默认 `generator -> evaluator`
+   - `Standard Lane`：普通功能，默认 `planner -> generator -> evaluator`
+   - `Strict Lane`：高风险改动，再加入 `fixer` 循环
+4. 主控只按需启用角色：
+   - `planner`：只在 `Standard / Strict Lane` 默认启用
    - `generator`：Execute
    - `evaluator`：Verify / Review（写入当前 TASK 卡，并引用执行证据）
-   - `fixer`：修复失败项并回交复验
+   - `fixer`：只在验证失败后启用
    - 主控：Sync / Next Task Draft 落盘
-4. 如果这是空项目，`TASK-001` 可以直接定义为 `Bootstrap Task`，用于创建第一批真实代码和配置
-5. 再把真实代码目录扩展下去，例如：
+5. 如果这是空项目，`TASK-001` 可以直接定义为 `Bootstrap Task`，用于创建第一批真实代码和配置
+6. 再把真实代码目录扩展下去，例如：
    - `src/`
    - `app/`
    - `components/`
@@ -51,13 +55,14 @@
 ## 规则
 
 - 没有 `TASK`，不进入编码
-- 没有 `Plan`，不大改
+- 没有 `Plan`，不做中高风险改动
 - 没有 `Verify / Review`，不进入下一轮
 - 不一次性读取全部文档，优先按需加载
 - 可以生成下一张任务卡草案，但不能自动开始执行下一轮
 - 以 TASK 卡为主要信息中转枢纽
 - evaluator ↔ fixer 循环不超过 3 轮
 - `STATUS / BUILD_PLAN / WORKSTREAMS / next TASK file` 只由主控更新
+- `BUILD_PLAN.md` 只记录里程碑级变化，不要求每张小卡都回写
 - commit / tag 是可选的稳定 checkpoint，不是强制步骤
 
 

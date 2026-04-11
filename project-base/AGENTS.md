@@ -8,22 +8,86 @@
 - 先做当前 TASK，再想下一轮
 - 先读最少文档，不够再升级
 - 先产出可验证结果，再判断完成
+- 流程强度必须和任务风险匹配，不把重流程默认压到所有小任务上
 - `[HUMAN GATE]` 前必须真正停机，等人工确认
 - 不为当前 TASK 无关的 git、上层模板、示例说明、仓库管理信息做额外探索
 - 流程卡住时，优先保证当前闭环，而不是硬守形式
 
-## 默认流程
+## 执行车道
 
+先判断当前 TASK 属于哪一档，再决定流程强度。
+
+### Fast Lane
+
+适用：
+- 1 到 2 个文件的小修
+- 不改 API 契约、数据模型、权限、部署、迁移
+- UI 微调、文案修正、解析规则补丁、低风险 post-live 修复
+
+流程：
 1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
-2. 一次性拉起 `planner / generator / evaluator / fixer` 4 个子代理
-3. `planner` 先产出 Plan
+2. 如 TASK 卡已有清晰 `Plan`，可直接放行 `generator`
+3. `generator` 实现并写 `Changed Files / Execution Evidence`
+4. `evaluator` 基于证据验证并写 `Verify / Review`
+5. 到 `[HUMAN GATE] Sync Review`
+6. 主控更新 `TASK / STATUS`
+
+默认不要求：
+- 强制 `planner`
+- 强制 `Plan Review`
+- 预先拉起 `fixer`
+- 每轮都同步 `BUILD_PLAN.md`
+
+### Standard Lane
+
+适用：
+- 普通功能开发
+- 涉及 3 到 10 个文件
+- 需要先明确实现边界，但风险仍可控
+
+流程：
+1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
+2. 拉起 `planner`
+3. `planner` 产出 `Plan`
 4. 到 `[HUMAN GATE] Plan Review`
-5. `generator` 按 Plan 实现
-6. `evaluator` 基于证据验证并写 Review
+5. 放行 `generator`
+6. `evaluator` 验证
+7. 如有失败项，再拉起或放行 `fixer`
+8. 到 `[HUMAN GATE] Sync Review`
+9. 主控更新 `TASK / STATUS`，必要时更新 `BUILD_PLAN.md`
+
+### Strict Lane
+
+适用：
+- 改 API 契约、数据模型、权限、部署、迁移
+- 跨里程碑、跨工作流、并行写入风险高
+- 需要明确 checkpoint、失败回退和多轮修复
+
+流程：
+1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
+2. 拉起 `planner`
+3. `planner` 产出 `Plan`
+4. 到 `[HUMAN GATE] Plan Review`
+5. 放行 `generator`
+6. `evaluator` 基于证据验证
 7. 如有失败项，`fixer` 修复后回交 `evaluator`
 8. 到 `[HUMAN GATE] Sync Review`
 9. 主控更新 `TASK / BUILD_PLAN / STATUS`
 10. 如满足条件，生成下一张 TASK 草案，但不自动执行
+
+## 默认流程选择
+
+未明确标注时，默认走 `Standard Lane`。
+
+以下情况可自动降到 `Fast Lane`：
+- 当前问题可以从 TASK 卡和当前代码直接判断
+- 任务不需要冻结额外方案
+- 验证主要依赖构建、静态命中或最小运行时证据
+
+以下情况必须升到 `Strict Lane`：
+- 改接口协议、权限、迁移、部署或内容模型
+- 任务边界明显跨越当前 TASK
+- 多写入角色可能同时碰同一组文件
 
 `[HUMAN GATE]` 规则：
 
@@ -56,12 +120,14 @@
 - 如升级改变了理解，可在当前 TASK 的 `Notes for Next Task` 或 `STATUS.md` 里写一小段摘要
 - 文档与代码冲突时，以代码现状为准，收尾时再同步文档
 - 默认不要查看当前 TASK 无关的上层目录、其他示例或 git 状态，除非当前任务明确依赖它们
+- 同一会话内已确认的阶段性上下文默认复用，不要每轮机械性重读全部文档
 
 ## 四角色职责
 
 - `planner`
   - 读文档，压缩上下文，产出 Plan
   - 只写 TASK 卡的 `Plan`
+  - 只在 `Standard / Strict Lane` 默认启用；`Fast Lane` 按需启用
 
 - `generator`
   - 只按 Plan 实现
@@ -75,12 +141,12 @@
   - 填写 `Verify` 和 `Review`
   - 结构化断言必须实际执行
   - 必须回传执行过程摘要：`Tried`、`Blocked by`、`Fallback used`、`Commands run`、`Conclusion`
-  - 默认优先使用 Playwright MCP；如果未使用，必须说明原因
-  - 默认先做最小验证集，不得因为单个工具卡住就无限追加复杂验证动作
+  - 按任务类型选择最小验证模板，不得因为单个工具卡住就无限追加复杂验证动作
 
 - `fixer`
   - 只修 `evaluator` 明确指出的问题
   - 修完回交复验
+  - 不预先待命；只有出现失败项时再启用
 
 ## 文件边界
 
@@ -91,11 +157,28 @@
 - `主控`：只写 `specs/`、`BUILD_PLAN.md`、`STATUS.md`、`WORKSTREAMS.md`
 
 如果没有明确并行收益，不要让多个写入型角色同时改同一组文件。
+默认延迟创建角色，避免“一次性拉起 4 个子代理”。
 
 ## 验证与判定
 
+- 验证策略必须按任务类型选择，不做统一重流程
+- 纯后端解析、配置、小型 refactor 任务，优先构建、静态命中和最小运行时验证，不强求 Playwright
 - 纯静态页面任务中，自动化浏览器验证默认通过临时本地静态 server 进行，不直接要求 Playwright 访问 `file://`
 - `file://` 直开能力通过静态约束检查与必要的手动验证保证；如果 MCP 环境阻止 `file://`，不得仅因此判定任务失败
+
+验证模板：
+
+- UI / 页面任务
+  - 默认优先 Playwright MCP
+  - 最小验证集：页面能打开、关键内容存在、控制台无阻断错误、源码约束扫描通过
+
+- 后端解析 / 协议内增强任务
+  - 默认优先构建、静态命中、最小运行时等效验证
+  - 若不使用 Playwright，只需说明该任务不依赖 UI 证据
+
+- 纯文档 / 配置任务
+  - 默认优先静态检查、一致性校验和必要命令结果
+  - 不要求额外浏览器验证
 
 纯静态页面默认最小验证集：
 
@@ -146,13 +229,18 @@ Fallback 触发时必须显式说明：
 当前 TASK 完成后，主控必须更新：
 
 - 当前 `specs/TASK-xxx.md`
-- `BUILD_PLAN.md`
 - `STATUS.md`
 
-如本轮实现改变了需求或决策，再按需更新：
-
+按需更新：
+- `BUILD_PLAN.md`
 - `SPEC.md`
 - `DECISIONS.md`
+- `WORKSTREAMS.md`
+
+同步最小化原则：
+- `TASK` 记录执行细节与证据
+- `STATUS.md` 只记录当前指针
+- `BUILD_PLAN.md` 只记录里程碑级变化，不要求每张小卡都回写
 
 ## 主控输出
 
