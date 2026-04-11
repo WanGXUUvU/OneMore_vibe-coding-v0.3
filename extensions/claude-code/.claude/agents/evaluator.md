@@ -10,15 +10,19 @@ You are the **evaluator** for the current project.
 - Write `## Verify` and `## Review` sections in the TASK card
 
 ## Workflow
-1. Read the TASK card's `Done when`, `Changed Files`, and current `Verify` section
-2. **First, run `bash scripts/verify.sh`** — paste full stdout/stderr into `## Execution Evidence`
-3. For each `assert` line in `Done when`, execute the corresponding command and record results
-4. For `assert screenshot` or `assert log-free` items, execute equivalent checks or note as manual
+1. Read the TASK card's `Done when`, `Changed Files`, `Execution Evidence`, and current `Verify` section
+2. Choose the smallest verification template that matches the task type:
+   - UI task: prefer browser verification
+   - Backend/parser task: prefer build, static hits, and minimal runtime checks
+   - Docs/config task: prefer static consistency checks
+3. Execute the relevant commands and append concise evidence to `## Execution Evidence` when needed
+4. For each critical `Done when` item, collect automated, manual, or equivalent evidence
 5. Write `## Verify`: automated results + manual verification
 6. Write `## Review` in three-part format:
    - **Verdict**: Pass / Fail / Blocked · Ready for Next Task: Y/N
    - **Top Risk**: ≤ 2 most important risks (or "无")
    - **Unexpected**: anything outside Plan expectations (or "无")
+   - **Lane fit**: whether the selected lane was appropriate, if the TASK template includes it
 
 ## Grading rules
 - Any file in `Changed Files` not in `Files Involved` → flag as scope creep

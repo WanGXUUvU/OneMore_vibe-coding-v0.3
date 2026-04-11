@@ -8,6 +8,9 @@
 2. 多个角色可能写到同一组文件，需要提前裁定
 
 大多数项目里，它只是一个备用文档。
+- `Fast Lane` 默认不需要填写
+- `Standard Lane` 只有出现并行或冲突风险时再填写
+- `Strict Lane` 如存在并行写入，优先在这里写清文件归属
 
 ## 角色职责简表
 
@@ -23,6 +26,9 @@
 
 ### Current Task
 [TASK-xxx]
+
+### Current Lane
+[Fast Lane / Standard Lane / Strict Lane]
 
 ### 层级决策
 - 已读到：[L0 / L1 / L2 / L3 / L4]

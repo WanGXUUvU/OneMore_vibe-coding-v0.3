@@ -7,23 +7,25 @@
 - SPEC: [对应目标或范围]
 - BUILD_PLAN: [对应里程碑]
 
+## Task Form
+- Type: [`Full Task`]
+
 ## Goal
 [本轮要完成什么]
 
+## Scope
+- In: [本轮要做什么]
+- Out: [本轮不做什么]
+
+## Done when
+- [ ] [条件 1]
+- [ ] [条件 2]
+
 ## Context
-[本轮最相关的上下文]
-
-## In Scope
-- [本轮包含 1]
-- [本轮包含 2]
-
-## Out of Scope
-- [本轮不做 1]
+[可选；只有边界不清时再写]
 
 ## Constraints
-- 单张 TASK 变更文件 ≤10 个
-- 如果代码库为空，可标记为 `Bootstrap Task`
-- 如为纯静态页面，自动化浏览器验证默认通过临时本地静态 server 执行，不直接要求 Playwright 访问 `file://`
+[可选；只有存在硬约束时再写]
 
 ## Execution Lane
 
@@ -33,37 +35,38 @@
 - `Standard Lane`：普通功能开发；需要 `Plan Review`
 - `Strict Lane`：高风险任务；涉及协议、权限、迁移、部署或高并行风险
 
+## Lane Decision
+
+> 开工前必须落盘当前轮实际选择。
+
+- Selected: [`Fast Lane` / `Standard Lane` / `Strict Lane`]
+- Why this lane: [一句话说明]
+
+## Plan Gate
+
+> 开工前必须落盘。`Fast Lane` 默认 `Skipped`；`Standard / Strict` 默认 `Required`。
+
+- Status: [`Required` / `Skipped`]
+- Why: [一句话说明]
+
 ## Invariants
-- [本轮不能破坏的事实 1]
-- [本轮不能破坏的事实 2]
+[可选；只有确实存在不可破坏前提时再写]
 
 ## Required Reads
 
 | 角色 | 必读 |
 |------|------|
 | 主控 | `AGENTS.md` + `STATUS.md` + 本卡；按需 `BUILD_PLAN.md` |
-| planner | 仅在 `Standard / Strict Lane` 默认启用；读本卡与必要上文 |
-| generator | 本卡 `Plan` + [相关源码文件] |
+| planner | 仅在 `Standard / Strict Lane` 默认启用；读本卡与必要上文；TASK 卡 Plan 段已有内容且范围清晰时可跳过 |
+| generator | Plan Gate = Required：本卡 `Plan` + [相关源码文件]<br>Plan Gate = Skipped：本卡 `Scope / Done when / Files Involved` + [相关源码文件] |
 | evaluator | 本卡 `Done when` + `Changed Files` + `Execution Evidence` |
 | fixer | 仅在 `evaluator` 明确指出失败项后启用 |
 
 ## Files Involved
-- [路径 1]
-- [路径 2]
+[核心文件列表]
 
 ## Preflight Checks
-- [开工前必须确认的事实 1]
-- [开工前必须确认的事实 2]
-
-## Done when
-
-> 只写可运行、可验证的代码或交付标准。
-> 好例：通过临时本地静态 server 打开 `index.html` 时无阻断性错误，且实现仍满足 `file://` 直开约束。
-> 反例：文档格式正确。
-
-- [ ] [条件 1]
-- [ ] [条件 2]
-- [ ] [如需保留 `file://` 直开能力，补充不会破坏该能力的静态约束]
+[可选；只有开工前必须确认的事实才写]
 
 ---
 
@@ -97,6 +100,7 @@
 - Evidence refs: [引用的证据]
 - Results: [Pass / Fail / Blocked 项]
 - Fix log: [如有修复，记录本轮修复]
+- Next action: [`Sync Review` / `Pull fixer` / `Blocked`]
 
 ## Review
 
@@ -105,15 +109,5 @@
 - Unexpected: [无则写"无"]
 - Lane fit: [本轮所选执行车道是否合适；如不合适，说明应升/降档]
 
-## Review Focus
-
-- [重点检查项]
-
 ## Notes for Next Task
 - [给下一轮 planner 的输入、遗留项、注意事项]
-
----
-
-## Archive
-
-> 旧轮次 Verify / Fix log 移到此处。

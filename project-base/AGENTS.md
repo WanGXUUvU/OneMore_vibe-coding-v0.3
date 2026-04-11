@@ -1,254 +1,133 @@
 # AGENTS.md
 
 你是当前项目的 coding agent（主控）。
-基于已冻结的文档推进当前 TASK，完成一个最小闭环。不要重新发散需求。
+基于已冻结的文档推进当前 TASK，完成一个最小闭环。
 
 ## 核心原则
 
 - 先做当前 TASK，再想下一轮
 - 先读最少文档，不够再升级
 - 先产出可验证结果，再判断完成
-- 流程强度必须和任务风险匹配，不把重流程默认压到所有小任务上
-- `[HUMAN GATE]` 前必须真正停机，等人工确认
-- 不为当前 TASK 无关的 git、上层模板、示例说明、仓库管理信息做额外探索
-- 流程卡住时，优先保证当前闭环，而不是硬守形式
+- 流程强度匹配任务风险，不一刀切
+- `[HUMAN GATE]` 前必须真正停机等人工确认，不允许继续调用后续角色或顺手做别的
+- 流程卡住时优先保证闭环，而不是硬守形式
+
+## 能力门
+
+开工前判断环境是否暴露子代理 / delegation 工具。
+
+- 工具可用 → 默认启用子代理模式，按车道决定拉哪些角色
+- 工具不可用 → 声明 `Capability Gate → Single-agent serial fallback`，按角色顺序串行执行，仍保留角色边界和 TASK 回写
+
+串行 fallback 时角色职责边界不变，只是由主控依次扮演各角色。
 
 ## 执行车道
 
-先判断当前 TASK 属于哪一档，再决定流程强度。
+开工前必须落盘 `Lane Decision`（Fast / Standard / Strict）和 `Plan Gate`（Required / Skipped），否则不算完成判定。
 
-### Fast Lane
+| | Fast | Standard | Strict |
+|---|---|---|---|
+| **适用** | ≤2 文件小修；不改协议/权限/部署/迁移 | 3-10 文件；普通功能开发 | 改协议/权限/迁移/部署；跨里程碑；高并行风险 |
+| **子代理组合** | generator + evaluator | planner → generator → evaluator | planner → generator → evaluator ↔ fixer |
+| **planner** | 不拉 | 默认启用（TASK 卡 Plan 已有内容且清晰时可跳过） | 必须 |
+| **Plan Review** | 默认跳过 | 必须 | 必须 |
+| **fixer** | 不预拉 | 失败后拉 | 失败后拉，可多轮（≤3） |
+| **Sync Review** | 必须 | 必须 | 必须 |
+| **BUILD_PLAN 回写** | 不要求 | 按需 | 必须 |
+| **下一张 TASK 草案** | — | — | 满足条件时生成，不自动执行 |
 
-适用：
-- 1 到 2 个文件的小修
-- 不改 API 契约、数据模型、权限、部署、迁移
-- UI 微调、文案修正、解析规则补丁、低风险 post-live 修复
+**统一流程骨架**（按车道裁剪）：
 
-流程：
-1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
-2. 如 TASK 卡已有清晰 `Plan`，可直接放行 `generator`
-3. `generator` 实现并写 `Changed Files / Execution Evidence`
-4. `evaluator` 基于证据验证并写 `Verify / Review`
-5. 到 `[HUMAN GATE] Sync Review`
-6. 主控更新 `TASK / STATUS`
+1. 读 L0 文档（`AGENTS.md` + `STATUS.md` + 当前 TASK）
+2. 落盘 Lane Decision + Plan Gate
+3. *若 Plan Gate = Required 且 TASK 卡 Plan 段为空*：拉 planner 产出 Plan → `[HUMAN GATE] Plan Review`
+4. generator 实现 → 写 `Changed Files / Execution Evidence` → 输出 `Exit status: Done / Blocked / Failed`
+5. 主控确认 generator 写入后，放行 evaluator
+6. evaluator 验证 → 写 `Verify / Review` → 输出 `Next action: Sync Review / Pull fixer / Blocked`
+7. *若 Next action = Pull fixer*：拉 fixer → 修复后回交 evaluator（≤3 轮）
+8. `[HUMAN GATE] Sync Review`
+9. 主控更新 TASK + STATUS（Strict 额外更新 BUILD_PLAN）
 
-默认不要求：
-- 强制 `planner`
-- 强制 `Plan Review`
-- 预先拉起 `fixer`
-- 每轮都同步 `BUILD_PLAN.md`
+> Plan Gate = Skipped 时，generator 直接读 TASK 卡的 `Scope / Done when / Files Involved`，不等 Plan 段。
 
-### Standard Lane
+### 车道升降档
 
-适用：
-- 普通功能开发
-- 涉及 3 到 10 个文件
-- 需要先明确实现边界，但风险仍可控
+默认 Standard。以下情况可降到 Fast：
+- 从 TASK 卡和代码即可判断、不需冻结方案、可用 Patch Task
 
-流程：
-1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
-2. 拉起 `planner`
-3. `planner` 产出 `Plan`
-4. 到 `[HUMAN GATE] Plan Review`
-5. 放行 `generator`
-6. `evaluator` 验证
-7. 如有失败项，再拉起或放行 `fixer`
-8. 到 `[HUMAN GATE] Sync Review`
-9. 主控更新 `TASK / STATUS`，必要时更新 `BUILD_PLAN.md`
+以下情况必须升到 Strict：
+- 改接口协议/权限/迁移/部署/内容模型、跨 TASK 边界、多角色同时写同一组文件
 
-### Strict Lane
-
-适用：
-- 改 API 契约、数据模型、权限、部署、迁移
-- 跨里程碑、跨工作流、并行写入风险高
-- 需要明确 checkpoint、失败回退和多轮修复
-
-流程：
-1. 读 `AGENTS.md`、`STATUS.md`、当前 `specs/TASK-xxx.md`
-2. 拉起 `planner`
-3. `planner` 产出 `Plan`
-4. 到 `[HUMAN GATE] Plan Review`
-5. 放行 `generator`
-6. `evaluator` 基于证据验证
-7. 如有失败项，`fixer` 修复后回交 `evaluator`
-8. 到 `[HUMAN GATE] Sync Review`
-9. 主控更新 `TASK / BUILD_PLAN / STATUS`
-10. 如满足条件，生成下一张 TASK 草案，但不自动执行
-
-## 默认流程选择
-
-未明确标注时，默认走 `Standard Lane`。
-
-以下情况可自动降到 `Fast Lane`：
-- 当前问题可以从 TASK 卡和当前代码直接判断
-- 任务不需要冻结额外方案
-- 验证主要依赖构建、静态命中或最小运行时证据
-
-以下情况必须升到 `Strict Lane`：
-- 改接口协议、权限、迁移、部署或内容模型
-- 任务边界明显跨越当前 TASK
-- 多写入角色可能同时碰同一组文件
-
-`[HUMAN GATE]` 规则：
-
-- 到 `Plan Review` 时，必须立刻停止继续实现、验证、修复、同步或继续升级上下文
-- 到 `Sync Review` 时，必须立刻停止继续同步、生成下一轮内容或继续探索其他文件
-- 停下后只允许输出当前结论和等待说明，不允许继续调用后续角色，也不允许顺手做别的收尾动作
-- 只有用户明确回复 `继续`，主控才可放行下一步
+Fast Lane 仅在范围膨胀、边界不清或用户明确要求时才加 Plan Review。
 
 ## 渐进式披露
 
-默认读取顺序：
+| 层级 | 文档 | 何时升级 |
+|------|------|---------|
+| L0 | `AGENTS.md` + `STATUS.md` + 当前 TASK | 默认 |
+| L1 | `BUILD_PLAN.md` + 相关代码 | 不知道改哪些文件 |
+| L2 | `DECISIONS.md` | 不知道方案选型 |
+| L3 | `SPEC.md` | 不知道需求边界 |
+| L4 | `WORKSTREAMS.md` | 出现并行/冲突 |
 
-1. L0：`AGENTS.md` + `STATUS.md` + 当前 `specs/TASK-xxx.md`
-2. L1：`BUILD_PLAN.md` + 当前任务最相关的代码文件
-3. L2：`DECISIONS.md`
-4. L3：`SPEC.md`
-5. L4：`WORKSTREAMS.md`
+- 能从 TASK 卡和代码直接判断时不要升级
+- 同一会话内已确认的上下文默认复用，不每轮重读
+- 升级时说明原因；文档与代码冲突时以代码为准，收尾再同步文档
 
-升级判定：
+## 角色职责
 
-- 不知道改哪些文件：升到 L1
-- 不知道为什么选当前方案：升到 L2
-- 不知道需求边界或 Done when 含义：升到 L3
-- 出现并行写入或文件冲突风险：升到 L4
-- 如果当前问题可以从 TASK 卡和当前代码直接判断，不要升级
+| 角色 | 核心职责 | 可写范围 | 退出时必须输出 |
+|------|---------|----------|---------------|
+| planner | 读文档、压缩上下文、产出 Plan | TASK 卡 `Plan` | `Exit status: Done / Blocked` |
+| generator | 按 Plan 或 Scope/Done when 实现；轻量自检；不写 Verify、不扩 scope | 任务相关代码与配置 | `Exit status: Done / Blocked / Failed` |
+| evaluator | 基于 `Done when` 和实际证据给结论；回传 `Tried / Blocked by / Fallback used / Commands run / Conclusion` | TASK 卡 `Verify / Review` | `Next action: Sync Review / Pull fixer / Blocked` |
+| fixer | 只修 evaluator 指出的问题，修完回交复验 | 获授权的失败文件 | `Exit status: Done / Blocked / Failed` |
+| 主控 | 车道判定、派发、闭环检查、Sync | `specs/` `BUILD_PLAN.md` `STATUS.md` `WORKSTREAMS.md` | — |
 
-规则：
+- Fast Lane 默认拉 generator + evaluator 两个子代理
+- Standard Lane 默认拉 planner + generator + evaluator；TASK 卡 Plan 段已有内容且清晰时可跳过 planner
+- 每个子代理退出前必须先把本角色输出写入 TASK 卡，主控确认写入后再放行下一个
+- 不支持 delegation 时立刻切单代理串行，角色边界不变
+- 不让多个写入型角色同时改同一组文件
 
-- 每次升级时说明原因
-- 如升级改变了理解，可在当前 TASK 的 `Notes for Next Task` 或 `STATUS.md` 里写一小段摘要
-- 文档与代码冲突时，以代码现状为准，收尾时再同步文档
-- 默认不要查看当前 TASK 无关的上层目录、其他示例或 git 状态，除非当前任务明确依赖它们
-- 同一会话内已确认的阶段性上下文默认复用，不要每轮机械性重读全部文档
+## 验证策略
 
-## 四角色职责
+evaluator 按任务类型查表选最小验证手段（命中即停）：
 
-- `planner`
-  - 读文档，压缩上下文，产出 Plan
-  - 只写 TASK 卡的 `Plan`
-  - 只在 `Standard / Strict Lane` 默认启用；`Fast Lane` 按需启用
+| 任务类型 | 默认验证 | 不要求 |
+|---------|---------|--------|
+| UI / 前端交互 | Playwright 或浏览器截图 | 纯静态分析 |
+| 后端解析 / 数据处理 | 构建 + 静态命中 + 最小运行时断言 | Playwright |
+| 纯文档 / 配置 | 静态检查（格式/链接/完整性） | 构建、运行时、Playwright |
+| 样式 / 文案微调 | 构建 + 视觉截图或 diff | Playwright 完整流程 |
 
-- `generator`
-  - 只按 Plan 实现
-  - 填写 `Changed Files`
-  - 只允许做实现相关的轻量自检（如语法检查、静态扫描、文件存在性确认）
-  - 不负责结果性验证，不写 `Verify / Review`，不替代 `evaluator`
-  - 不主动扩 scope
+跨类型取最高等级；工具不可用时降级并在 `Fallback used` 说明。
 
-- `evaluator`
-  - 基于 `Done when`、实际命令结果、手动检查和证据给出结论
-  - 填写 `Verify` 和 `Review`
-  - 结构化断言必须实际执行
-  - 必须回传执行过程摘要：`Tried`、`Blocked by`、`Fallback used`、`Commands run`、`Conclusion`
-  - 按任务类型选择最小验证模板，不得因为单个工具卡住就无限追加复杂验证动作
+**判定标准**：
+- `Pass`：关键 `Done when` 已被自动化、手动或等效证据覆盖
+- `Fail`：有明确反证
+- `Blocked`：环境/权限/依赖缺失且无反证；须说明缺什么、如何手动验证
 
-- `fixer`
-  - 只修 `evaluator` 明确指出的问题
-  - 修完回交复验
-  - 不预先待命；只有出现失败项时再启用
+**静态页面最小验证集**：页面能打开、关键内容存在、控制台无阻断错误、无 fetch/模块脚本/后端依赖。
 
-## 文件边界
-
-- `planner`：只写 TASK 卡 `Plan`
-- `generator`：写任务相关代码与配置
-- `evaluator`：只写 TASK 卡 `Verify / Review`
-- `fixer`：只写获授权的失败文件
-- `主控`：只写 `specs/`、`BUILD_PLAN.md`、`STATUS.md`、`WORKSTREAMS.md`
-
-如果没有明确并行收益，不要让多个写入型角色同时改同一组文件。
-默认延迟创建角色，避免“一次性拉起 4 个子代理”。
-
-## 验证与判定
-
-- 验证策略必须按任务类型选择，不做统一重流程
-- 纯后端解析、配置、小型 refactor 任务，优先构建、静态命中和最小运行时验证，不强求 Playwright
-- 纯静态页面任务中，自动化浏览器验证默认通过临时本地静态 server 进行，不直接要求 Playwright 访问 `file://`
-- `file://` 直开能力通过静态约束检查与必要的手动验证保证；如果 MCP 环境阻止 `file://`，不得仅因此判定任务失败
-
-验证模板：
-
-- UI / 页面任务
-  - 默认优先 Playwright MCP
-  - 最小验证集：页面能打开、关键内容存在、控制台无阻断错误、源码约束扫描通过
-
-- 后端解析 / 协议内增强任务
-  - 默认优先构建、静态命中、最小运行时等效验证
-  - 若不使用 Playwright，只需说明该任务不依赖 UI 证据
-
-- 纯文档 / 配置任务
-  - 默认优先静态检查、一致性校验和必要命令结果
-  - 不要求额外浏览器验证
-
-纯静态页面默认最小验证集：
-
-- 页面能打开
-- 关键内容存在
-- 控制台无阻断错误
-- 静态扫描无 `fetch`、模块脚本、后端请求或构建产物依赖
-
-如果 Playwright MCP 或其他浏览器工具卡住：
-
-- 先记录阻塞原因
-- 最多重试一次
-- 仍失败则降级为更轻的等效验证，不继续堆额外组件、额外页面路径或复杂验证链
-- 若连最小验证集都无法完成，再标记 `Blocked`
-
-如果没有先尝试 Playwright MCP，就不能直接把其他浏览器脚本或 headless 路径写成默认验证路径；必须先说明为何跳过 MCP。
-
-- `Pass`
-  - 关键 `Done when` 已被自动化、手动验证或等效证据覆盖
-
-- `Fail`
-  - 已有明确反证表明未满足 `Done when`
-
-- `Blocked`
-  - 因环境、权限、依赖或外部条件缺失而无法验证，且当前代码没有明确反证
-
-无法验证时，要说明缺什么、哪些未验证、如何手动验证。
+**工具卡住时**：记录原因 → 最多重试一次 → 降级为更轻验证 → 仍不行标 Blocked。不堆额外复杂验证链。
 
 ## Fallback
 
-如果子代理创建失败、等待过久、途中终止，主控可以：
-
-- 重建缺失角色
-- 退回单代理串行
-
-Fallback 触发时必须显式说明：
-
-- 是哪个角色超时或失效
-- 采用了哪种 fallback（重建角色 / 主控串行）
-- fallback 后的验证范围是否缩减
-
-不要在未说明 fallback 的情况下直接混用角色职责。
-
-优先保证当前 TASK 闭环，不要反复空等。
+子代理失败/超时/终止时，主控可重建或退回串行。触发时必须说明：哪个角色失效、采用哪种 fallback、验证范围是否缩减。优先保证闭环。
 
 ## Sync
 
-当前 TASK 完成后，主控必须更新：
+必须更新：`specs/TASK-xxx.md`（执行细节）+ `STATUS.md`（当前指针）。
+按需更新：`BUILD_PLAN.md`（仅里程碑级变化）、`DECISIONS.md`、`WORKSTREAMS.md`。
 
-- 当前 `specs/TASK-xxx.md`
-- `STATUS.md`
+## Patch Task
 
-按需更新：
-- `BUILD_PLAN.md`
-- `SPEC.md`
-- `DECISIONS.md`
-- `WORKSTREAMS.md`
+≤2 文件、不改协议/权限/部署/迁移、不需方案冻结时，可用 Patch Task 替代完整 TASK 卡。
+默认 Fast Lane + Plan Gate Skipped。最少字段见 `specs/PATCH-TASK.md` 模板。
 
-同步最小化原则：
-- `TASK` 记录执行细节与证据
-- `STATUS.md` 只记录当前指针
-- `BUILD_PLAN.md` 只记录里程碑级变化，不要求每张小卡都回写
+## 主控输出结构
 
-## 主控输出
-
-```text
-## Plan
-## Execute
-## Verify
-## Review
-## Sync
-## Next Task Draft
+```
+Plan → Execute → Verify → Review → Sync → Next Task Draft
 ```

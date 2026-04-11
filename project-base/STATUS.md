@@ -17,27 +17,17 @@
 ## Current Gate
 [None / Plan Review / Sync Review]
 
-## Outcome of Last Task
-- [ ] Pass
-- [ ] Fail
-- [ ] Blocked
-
-## Next Task Candidate
-[由主控填写，例如 TASK-002（已生成草案，待确认）]
-
-## Resume Command
-[给下一位接手 agent 的最小指令]
+## Current Lane
+[Fast Lane / Standard Lane / Strict Lane]
 
 ## Notes
-[阶段切换理由、阻塞等说明]
+[阶段切换理由、阻塞等说明；如有执行车道选择、升降档理由或最小恢复指令，也写在这里]
 
 ---
 
 ## History
 
-> 每个 TASK 闭环时追加一行。
-> 由主控追加，不由子代理直接修改。
+> 每个 TASK 闭环时由主控追加一行。
 
-| Task | Milestone | Outcome | Date |
-|------|-----------|---------|------|
-| - | - | - | - |
+| Task | Outcome | Date |
+|------|---------|------|

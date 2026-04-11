@@ -21,7 +21,9 @@
    - `SPEC.md`
    - `DECISIONS.md`
    - `BUILD_PLAN.md`
-   - `specs/TASK-001.md`
+   - 普通任务用 `specs/TASK-001.md`
+   - 小修任务用 `specs/PATCH-TASK.md`
+   - 需要长提示词时，查看 [`WEB-LLM-PROMPTS.md`](./WEB-LLM-PROMPTS.md)
 4. 再切到 Codex / Claude Code 执行当前任务卡
 
 推荐接手指令：
@@ -32,9 +34,7 @@
 - `STATUS.md`
 - 当前 `specs/TASK-xxx.md`
 
-现在使用多子代理 harness 执行当前任务。
-
-主控先按渐进式披露读取，不要一次性读完所有文档。确认当前 `Current Phase`、`Current Gate` 和任务边界后，先判断本轮适合 `Fast Lane / Standard Lane / Strict Lane` 中哪一档，再决定是否需要 `planner`、是否需要 `Plan Review`、以及是否需要预先创建 `fixer`。
+主控先按渐进式披露读取，不要一次性读完所有文档。先做 `Capability Gate`：确认当前环境是否真的支持 delegation / subagent 工具。只有通过后，才进入多子代理 harness；如果不支持，必须立刻声明 `Single-agent serial fallback`。然后确认当前 `Current Phase`、`Current Gate` 和任务边界后，先判断本轮适合 `Fast Lane / Standard Lane / Strict Lane` 中哪一档，并显式写出 `Lane Decision` 与 `Plan Gate`，再决定是否需要 `planner`、是否需要 `Plan Review`、以及是否需要预先创建 `fixer`。
 
 执行时以 TASK 卡 `Required Reads` 为准：
 - `planner` 只在 `Standard / Strict Lane` 默认启用，负责 `Read -> Plan`
@@ -54,7 +54,8 @@
 ```text
 OneMore_vibe-coding_v1.0/
 ├── README.md
-├── PLAYBOOK.md              ← 操作手册（网页 LLM → coding agent 全流程）
+├── PLAYBOOK.md              ← 短版操作手册（启动 / lane / gate / 接手指令）
+├── WEB-LLM-PROMPTS.md       ← 网页大语言模型阶段提示词仓库
 ├── project-base/            ← core：复制这个目录到新项目
 │   ├── AGENTS.md            ← 角色定义与职责
 │   ├── SPEC.md              ← 需求规格
@@ -65,7 +66,8 @@ OneMore_vibe-coding_v1.0/
 │   ├── README.md
 │   ├── .gitignore
 │   └── specs/
-│       └── TASK-001.md      ← 任务卡模板
+│       ├── TASK-001.md      ← 完整任务卡模板
+│       └── PATCH-TASK.md    ← 小修轻量模板
 ├── extensions/              ← 可选扩展包
 │   ├── README.md            ← 扩展包说明与安装指南
 │   ├── claude-code/         ← Claude Code 适配
@@ -81,8 +83,6 @@ OneMore_vibe-coding_v1.0/
 │           ├── grader-schema.yaml
 │           ├── capability/example.yaml
 │           └── regression/example.yaml
-└── examples/
-    └── personal-blog.md
 ```
 
 ---
@@ -97,7 +97,8 @@ OneMore_vibe-coding_v1.0/
 | `BUILD_PLAN.md` | 里程碑拆分 |
 | `STATUS.md` | 当前状态追踪 |
 | `WORKSTREAMS.md` | 静态角色分工和并行声明 |
-| `TASK-001.md` | 任务卡模板 |
+| `TASK-001.md` | 完整任务卡模板 |
+| `PATCH-TASK.md` | 小修轻量模板 |
 
 ---
 
@@ -105,9 +106,9 @@ OneMore_vibe-coding_v1.0/
 
 最小闭环就是这条线：
 
-`SPEC → DECISIONS → BUILD_PLAN → TASK → lane select → generator / planner → evaluator / fixer → [HUMAN GATE] → Sync`
+`SPEC → DECISIONS → BUILD_PLAN → TASK/Patch Task → capability gate → lane select → generator / planner → evaluator / fixer → [HUMAN GATE] → Sync`
 
-默认按 `Standard Lane` 执行，不默认走最重流程。
+默认按 `Standard Lane` 执行，不默认走最重流程。`Plan Review` 也不是默认门，只在 `Standard / Strict` 默认要求。
 
 启动时主控应先按渐进式披露读 L0，先判断当前任务该走哪条车道，再按需创建角色。每个角色都以 TASK 卡里的 `Required Reads` 为输入边界，只写自己负责的段落或文件，不重读无关文档，不改不属于自己的内容。
 

@@ -9,12 +9,13 @@ You are the **planner** for the current project.
 - Read project documents and compress context
 - Produce a Plan for the current TASK card
 - You may ONLY write to the TASK card's `## Plan` section
+- Default role only for `Standard / Strict Lane`; `Fast Lane` can skip planner if the TASK already has a clear Plan
 
 ## Workflow
 1. Read `AGENTS.md`, `STATUS.md`, and the current `specs/TASK-xxx.md`
 2. If needed, read `BUILD_PLAN.md` (L1 escalation)
 3. Output a Plan containing: goal / files read / files involved / steps / risks / verification method
-4. For multi-agent mode, also include: per-role I/O, file ownership overrides, master-only work
+4. Keep the Plan proportional to task size; do not introduce heavyweight coordination for low-risk patch tasks
 
 ## Constraints
 - DO NOT modify any code files

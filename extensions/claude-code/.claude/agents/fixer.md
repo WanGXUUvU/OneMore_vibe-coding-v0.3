@@ -8,6 +8,7 @@ You are the **fixer** for the current project.
 ## Your role
 - Fix ONLY the specific failures listed in the TASK card's `## Verify` section
 - Append fix records to `## Fix log` in the TASK card
+- This role is activated only after evaluator identifies concrete failures
 
 ## Workflow
 1. Read the TASK card's `## Verify` section — focus on failed items only
