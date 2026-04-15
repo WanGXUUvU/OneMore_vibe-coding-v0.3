@@ -29,6 +29,21 @@ Each host includes two variants:
 - `full`: a structured workflow with planning documents, task cards, lane selection, verification, review, and human gates
 - `lite`: a lighter version that keeps the same mental model with less process overhead
 
+## Quick Start
+
+1. Choose your host: Codex, Claude Code, GitHub Copilot, or CodeBuddy.
+2. Copy the matching skill folders from `agent-skills/<host>/` into your local skills directory.
+3. Trigger either the `full` or `lite` workflow skill in your agent prompt.
+
+Common install targets:
+
+- Codex: `~/.codex/skills/`
+- Claude Code: `~/.claude/skills/`
+- GitHub Copilot: `~/.copilot/skills/` or repo-local `.github/skills/`
+- CodeBuddy: `~/.codebuddy/skills/`
+
+Detailed install commands and examples live in [agent-skills/README.md](./agent-skills/README.md).
+
 ## Why This Repo Exists
 
 Most agents are good at generating code. Fewer are guided by a stable delivery rhythm.

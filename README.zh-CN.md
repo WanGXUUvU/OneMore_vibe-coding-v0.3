@@ -29,6 +29,21 @@
 - `full`：强调文档骨架、车道选择、验证、评审和人工 gate 的完整工作流
 - `lite`：保留同样心智模型，但减少默认流程负担的轻量工作流
 
+## Quick Start
+
+1. 先选择你使用的宿主：Codex、Claude Code、GitHub Copilot 或 CodeBuddy。
+2. 从 `agent-skills/<host>/` 复制对应的 skill 目录到本机 skills 目录。
+3. 在 agent 提示词中触发 `full` 或 `lite` 版本的 workflow skill。
+
+常见安装目录：
+
+- Codex：`~/.codex/skills/`
+- Claude Code：`~/.claude/skills/`
+- GitHub Copilot：`~/.copilot/skills/` 或仓库内 `.github/skills/`
+- CodeBuddy：`~/.codebuddy/skills/`
+
+更详细的安装命令和示例见 [agent-skills/README.zh-CN.md](./agent-skills/README.zh-CN.md)。
+
 ## 为什么做这个仓库
 
 大多数 agent 都会写代码，但不是每个 agent 都会按稳定的节奏把项目推进下去。
