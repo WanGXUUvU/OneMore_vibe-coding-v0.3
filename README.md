@@ -1,4 +1,4 @@
-English | [简体中文](./README.zh-CN.md)
+<p align="right"><strong>English</strong> | <a href="./README.zh-CN.md">简体中文</a></p>
 
 # Agent Workflow Skills
 

@@ -1,2 +1,5 @@
 .DS_Store
 Thumbs.db
+.claude/
+project-base-claude-native/
+project-base-codex-native/
