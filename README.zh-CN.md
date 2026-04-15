@@ -1,4 +1,4 @@
-English | [简体中文](./README.zh-CN.md)
+[English](./README.md) | 简体中文
 
 # Agent Workflow Skills
 
@@ -13,35 +13,35 @@ English | [简体中文](./README.zh-CN.md)
   <img src="https://img.shields.io/badge/languages-English%20%7C%20中文-eab308?style=flat-square" alt="English and Chinese" />
 </p>
 
-A curated set of project-workflow skills for modern AI coding agents.
+一套面向现代 AI coding agent 的项目工作流 skills 集合。
 
-This repository packages the same workflow family across multiple hosts so you can keep one project-operating model while switching between tools.
+这个仓库把同一套 workflow family 分别适配到了多个宿主上，让你在切换工具时，仍然可以保持一致的项目推进方式。
 
-Supported hosts:
+当前支持：
 
 - Codex
 - Claude Code
 - GitHub Copilot
 - CodeBuddy
 
-Each host includes two variants:
+每个宿主都提供两个版本：
 
-- `full`: a structured workflow with planning documents, task cards, lane selection, verification, review, and human gates
-- `lite`: a lighter version that keeps the same mental model with less process overhead
+- `full`：强调文档骨架、车道选择、验证、评审和人工 gate 的完整工作流
+- `lite`：保留同样心智模型，但减少默认流程负担的轻量工作流
 
-## Why This Repo Exists
+## 为什么做这个仓库
 
-Most agents are good at generating code. Fewer are guided by a stable delivery rhythm.
+大多数 agent 都会写代码，但不是每个 agent 都会按稳定的节奏把项目推进下去。
 
-These skills are designed to give agents a repeatable way to move a project forward:
+这套 skills 的目标，是给 agent 一个可重复的项目执行方式：
 
-1. read the repo state first
-2. turn vague work into executable tasks
-3. choose the right delivery lane
-4. verify and review before closure
-5. stop at explicit human decision points
+1. 先读仓库现状
+2. 把模糊任务收敛成可执行任务
+3. 选择合适的交付车道
+4. 在收口前完成验证与评审
+5. 在关键节点停下来等待人工决策
 
-The goal is not more ceremony. The goal is cleaner execution.
+它不是为了增加流程感，而是为了让执行更干净、更稳定。
 
 ## Included Skills
 
@@ -61,7 +61,7 @@ The goal is not more ceremony. The goal is cleaner execution.
 - `codebuddy-native-project-workflow`
 - `codebuddy-native-lite-project-workflow`
 
-## Repository Layout
+## 仓库结构
 
 ```text
 agent-skills/
@@ -80,44 +80,44 @@ agent-skills/
     └── codebuddy-native-lite-project-workflow/
 ```
 
-For installation details, host-specific notes, and usage examples, see [agent-skills/README.md](./agent-skills/README.md).
+更详细的安装说明、宿主差异和使用示例见 [agent-skills/README.zh-CN.md](./agent-skills/README.zh-CN.md)。
 
 ## Workflow Model
 
-All eight skills share the same core shape:
+这 8 个 skills 共享同一套核心结构：
 
-1. Read the current repo before acting.
-2. Use `TASK-000` when the task is not yet executable.
-3. Record scope, constraints, and done conditions.
-4. Choose a lane such as `Fast`, `Standard`, or `Strict` where supported.
-5. Finish every implementation step with `Verify` and `Review`.
-6. Pause at gates such as `Brainstorm Review`, `Plan Review`, and `Sync Review`.
+1. 先读取当前仓库状态
+2. 当任务还不可执行时，先走 `TASK-000`
+3. 记录范围、约束和完成标准
+4. 在支持的宿主里选择 `Fast`、`Standard`、`Strict`
+5. 每次实施结束都必须补 `Verify` 和 `Review`
+6. 在 `Brainstorm Review`、`Plan Review`、`Sync Review` 等节点停下来
 
-In practice, this gives you a small project operating system for agent-driven work.
+实际效果上，它更像是一个给 agent 用的小型项目操作系统。
 
 ## Full vs Lite
 
 ### Full
 
-Choose the full workflow when you want:
+适合这些场景：
 
-- stronger structure from idea to delivery
-- explicit repo docs such as `SPEC.md`, `DECISIONS.md`, `BUILD_PLAN.md`, and `STATUS.md`
-- clearer planning checkpoints
-- better traceability for multi-step or higher-risk work
+- 从 0 到 1 启动项目
+- 希望明确维护 `SPEC.md`、`DECISIONS.md`、`BUILD_PLAN.md`、`STATUS.md`
+- 需要更强的可追踪性
+- 多步骤、高风险任务希望显式经过 `Plan Review`
 
 ### Lite
 
-Choose the lite workflow when you want:
+适合这些场景：
 
-- the same task-driven discipline with less overhead
-- fewer required docs
-- faster iteration loops
-- a simpler default for small and medium-sized work
+- 想保留任务卡与关卡，但不想默认流程太重
+- 不需要一开始就维护太多根文档
+- 更强调快速闭环
+- 希望把它作为小中型项目的默认模式
 
 ## Quick Start
 
-Copy the skill folders for your host into its local skills directory.
+按你使用的宿主，把对应 skill 目录复制到本机的 skills 目录即可。
 
 ### Codex
 
@@ -140,7 +140,7 @@ cp -R agent-skills/copilot/copilot-native-project-workflow ~/.copilot/skills/
 cp -R agent-skills/copilot/copilot-native-lite-project-workflow ~/.copilot/skills/
 ```
 
-You can also vendor the Copilot skills inside a repo under:
+Copilot 也可以按仓库级放在：
 
 ```text
 .github/skills/
@@ -153,7 +153,7 @@ cp -R agent-skills/codebuddy/codebuddy-native-project-workflow ~/.codebuddy/skil
 cp -R agent-skills/codebuddy/codebuddy-native-lite-project-workflow ~/.codebuddy/skills/
 ```
 
-## Example Invocations
+## 使用示例
 
 ### Codex
 
@@ -183,24 +183,26 @@ Use $copilot-native-lite-project-workflow to keep the workflow lightweight.
 使用 $codebuddy-native-lite-project-workflow 以精简模式继续当前任务
 ```
 
-## Design Principles
+## 设计原则
 
-- One workflow family, adapted across hosts
-- Clear host-specific naming
-- Symmetry between `full` and `lite`
-- Shared semantics without forcing one metadata format everywhere
+- 同一套 workflow family，分别适配不同宿主
+- 命名上明确标识宿主
+- `full` 与 `lite` 保持镜像关系
+- 语义尽量统一，但不强行把所有宿主压成一种 metadata 格式
 
-## Publishing Scope
+## 推荐发布范围
 
-If you want this repository to stay clean and GitHub-friendly, the recommended publish scope is:
+如果你希望这个仓库在 GitHub 上保持干净，建议主要提交：
 
 - `README.md`
+- `README.zh-CN.md`
 - `agent-skills/`
+- `docs/assets/`
 
-That keeps the repo focused on the skills themselves rather than local experiments, working directories, or host-specific personal setup.
+这样首页会聚焦在 skills 本身，而不是本地实验目录或个人工作区结构。
 
 ## Notes
 
-- The skill folders in this repo are snapshots of live local skills.
-- If you continue iterating on your local versions, sync the updated copies back here before publishing a new revision.
-- Host loading behavior differs slightly, but the workflow semantics are intentionally aligned.
+- 仓库里的 skill 目录是本地 live skill 的快照。
+- 如果你在本机继续迭代，发布新版本前记得把最新版本同步回这里。
+- 不同宿主的加载方式会略有差异，但 workflow 语义已经尽量对齐。
