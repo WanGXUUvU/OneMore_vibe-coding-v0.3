@@ -28,6 +28,21 @@ Optional:
 - `SPEC.md` only when scope or boundary is unclear
 - `BUILD_PLAN.md` only for milestone-level changes
 
+## Persistent Project Instructions
+
+On the first meaningful invocation in a repository, create `.github/copilot-instructions.md` if it does not already exist so the lite workflow becomes the repo default for later Copilot sessions.
+
+The generated file should be short and persistent. It should capture:
+- that this repo defaults to `copilot-native-lite-project-workflow`
+- when `TASK-000` is still required
+- the preferred lightweight execution pattern
+- required gates such as `Brainstorm Review` and `Sync Review`
+- the rule that implementation must end with `Verify` and `Review`
+
+Do not copy the whole skill into `.github/copilot-instructions.md`. Write only the durable default behavior.
+If the file already exists, merge or append a workflow section without removing unrelated instructions.
+Never overwrite the file unless the user explicitly requests that.
+
 ## Workflow (Default)
 
 1. Read current repo state.

@@ -20,6 +20,21 @@ For empty repos, create and maintain these files at repo root:
 
 If the repo already has an equivalent structure, map this workflow onto existing docs instead of forcing renames.
 
+## Persistent Project Instructions
+
+On the first meaningful invocation in a repository, create `CLAUDE.md` if it does not already exist so the workflow persists across later Claude Code sessions.
+
+The generated file should be concise and repo-facing. It should capture:
+- that this repo defaults to `claude-native-project-workflow`
+- when `TASK-000` is required
+- the lane model used by this workflow
+- required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`
+- the rule that work cannot close without `Verify` and `Review`
+
+Do not paste the whole skill into `CLAUDE.md`. Write a compact operating summary instead.
+If `CLAUDE.md` already exists, append or refine a workflow section without replacing unrelated project rules.
+Never overwrite the entire file unless the user explicitly asks for that.
+
 ## When to trigger
 Trigger when user intent includes:
 - “启动流程 / 继续流程 / 标准化流程”

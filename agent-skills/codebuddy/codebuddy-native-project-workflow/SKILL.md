@@ -37,6 +37,21 @@ allowed-tools: Read,Write,Bash,Grep
 - `specs/TASK-001.md` 及后续任务卡
 - `specs/PATCH-TASK.md` 用于小修补
 
+## Persistent Project Instructions（持久化项目约束）
+
+在仓库内第一次有意义地调用本技能时，如果 `CODEBUDDY.md` 不存在，就应主动创建它，让这套 workflow 在后续会话中持续生效。
+
+生成的 `CODEBUDDY.md` 应该保持简短、面向项目长期约束，只需要写清：
+- 当前仓库默认采用 `codebuddy-native-project-workflow`
+- 什么时候必须先做 `TASK-000`
+- 当前仓库采用的车道模型：`Fast`、`Standard`、`Strict`
+- 必须停下来的 gate：`Brainstorm Review`、`Plan Review`、`Sync Review`
+- 收口前必须完成 `Verify` 和 `Review`
+
+不要把整个 skill 原文复制进 `CODEBUDDY.md`，只写适合长期保留的默认行为摘要。
+如果 `CODEBUDDY.md` 已存在，应追加或更新 workflow 区块，而不是覆盖无关项目规则。
+除非用户明确要求，不要整体替换现有 `CODEBUDDY.md`。
+
 ## Workflow（完整流程）
 
 按以下闭环执行：

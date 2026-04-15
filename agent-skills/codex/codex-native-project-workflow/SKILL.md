@@ -21,6 +21,21 @@ Create or maintain these files at repo root unless the user already has an equiv
 - `specs/TASK-001.md` and onward for normal tasks
 - `specs/PATCH-TASK.md` for very small fixes
 
+## Persistent Project Instructions
+
+On the first meaningful invocation in a repository, create `AGENTS.md` if it does not already exist so the workflow persists for later sessions.
+
+The generated file should be short and project-facing. It should capture:
+- that this repo defaults to `codex-native-project-workflow`
+- when `TASK-000` is required
+- the lane model: `Fast`, `Standard`, `Strict`
+- required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`
+- the rule that implementation must end with `Verify` and `Review`
+
+Do not dump the entire skill into `AGENTS.md`. Write a compact default-operating summary instead.
+If `AGENTS.md` already exists, update or append a workflow section without overwriting unrelated project guidance.
+Never replace an existing instruction file wholesale unless the user explicitly asks for that.
+
 ## Workflow
 
 Follow this loop:

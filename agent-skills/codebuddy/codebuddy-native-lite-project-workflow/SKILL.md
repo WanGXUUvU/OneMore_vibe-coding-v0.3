@@ -155,6 +155,21 @@ allowed-tools: Read,Write,Bash,Grep
 | `specs/TASK-001.md` 及之后 | 实施任务卡 | 确认范围后 |
 | `specs/PATCH-TASK.md` | 补丁任务 | 小修补时 |
 
+## Persistent Project Instructions（持久化项目约束）
+
+在仓库内第一次有意义地调用本技能时，如果 `CODEBUDDY.md` 不存在，就应主动创建它，让这套 lite workflow 在后续会话中作为默认方式持续生效。
+
+生成的 `CODEBUDDY.md` 应该保持简短，只需要写清：
+- 当前仓库默认采用 `codebuddy-native-lite-project-workflow`
+- 什么时候仍然必须先做 `TASK-000`
+- 当前仓库偏好的轻量执行方式
+- 必须停下来的 gate，例如 `Brainstorm Review`、`Sync Review`
+- 收口前必须完成 `Verify` 和 `Review`
+
+不要把整个 skill 原文复制进 `CODEBUDDY.md`，只写长期有效的默认规则。
+如果 `CODEBUDDY.md` 已存在，应合并或追加 workflow 区块，而不是覆盖无关内容。
+除非用户明确要求，否则不要整体替换现有 `CODEBUDDY.md`。
+
 ### 可选文件
 | 文件 | 用途 | 何时创建 |
 |------|------|---------|

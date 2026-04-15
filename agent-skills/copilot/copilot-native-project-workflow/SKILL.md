@@ -21,6 +21,21 @@ Create or maintain these files at repo root unless the repo already has an equiv
 - `specs/TASK-001.md` and onward for normal tasks
 - `specs/PATCH-TASK.md` for very small fixes
 
+## Persistent Project Instructions
+
+On the first meaningful invocation in a repository, create `.github/copilot-instructions.md` if it does not already exist so the workflow persists for later Copilot sessions.
+
+The generated file should be short and project-facing. It should capture:
+- that this repo defaults to `copilot-native-project-workflow`
+- when `TASK-000` is required
+- the lane model: `Fast`, `Standard`, `Strict`
+- required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`
+- the rule that implementation must end with `Verify` and `Review`
+
+Do not dump the entire skill into `.github/copilot-instructions.md`. Write a compact default-operating summary instead.
+If the file already exists, append or refine a workflow section without replacing unrelated repository instructions.
+Never overwrite the entire instruction file unless the user explicitly asks for replacement.
+
 ## Workflow
 
 Follow this loop:

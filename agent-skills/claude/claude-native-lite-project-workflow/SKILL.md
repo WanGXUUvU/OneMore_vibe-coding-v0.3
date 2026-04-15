@@ -27,6 +27,21 @@ Optional:
 - `SPEC.md` only when scope or boundary is unclear
 - `BUILD_PLAN.md` only for milestone-level changes
 
+## Persistent Project Instructions
+
+On the first meaningful invocation in a repository, create `CLAUDE.md` if it does not already exist so the lite workflow becomes the default for later Claude Code sessions.
+
+The generated file should be short and durable. It should capture:
+- that this repo defaults to `claude-native-lite-project-workflow`
+- when `TASK-000` is still required
+- the preferred lightweight execution pattern
+- required gates such as `Brainstorm Review` and `Sync Review`
+- the rule that work must finish with `Verify` and `Review`
+
+Do not copy the full skill into `CLAUDE.md`. Write only the project-level defaults.
+If `CLAUDE.md` already exists, merge or append a workflow section without deleting unrelated guidance.
+Never overwrite the full file unless the user explicitly requests that.
+
 ## Workflow (Default)
 
 1. Read current repo state.
