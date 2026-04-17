@@ -69,6 +69,22 @@
 
 实际效果上，它更像是一个给 agent 用的小型项目操作系统。
 
+## 实际流程
+
+当前这套 workflow family 围绕一条很小但很硬的审批闭环展开：
+
+1. 先初始化仓库，建立最小工作流文件。
+2. 用 `TASK-000` 把模糊想法收敛成可执行 brief。
+3. 停在 `Brainstorm Review`，直到 brief 足够清楚。
+4. 用 `create-task` 创建下一张实现任务卡，例如 `TASK-001`。
+5. 在写代码前停在 `Implementation Approval`。
+6. 用 `start-implementation` 进入实现闭环。
+7. 完成当前任务时必须补 `Verify` 和 `Review`。
+8. 停在 `Sync Review`，然后只显式选择下一步中的一个：
+   接受当前任务、继续当前任务、或创建下一张任务卡。
+
+在 lite 模式下，`TASK-000` 应该通过缺口驱动的追问来推进，而不是默认要求用户重写整版 brief。full 模式沿用同样的审批主链，但会配合更完整的仓库文档和更强的计划检查点。
+
 ## Full vs Lite
 
 ### Full

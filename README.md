@@ -69,6 +69,22 @@ All eight skills share the same core shape:
 
 In practice, this gives you a small project operating system for agent-driven work.
 
+## Delivery Flow
+
+The current workflow family is designed around a small approval-driven loop:
+
+1. Bootstrap the repo and create the minimum workflow files.
+2. Use `TASK-000` to turn a vague idea into an executable brief.
+3. Stay at `Brainstorm Review` until the brief is clear enough.
+4. Use `create-task` to create the next implementation card such as `TASK-001`.
+5. Stop at `Implementation Approval` before writing code.
+6. Use `start-implementation` to begin the implementation loop.
+7. Finish the task with `Verify` and `Review`.
+8. Stop at `Sync Review`, then explicitly choose one next move:
+   accept the task, continue the task, or create the next task card.
+
+In lite mode, `TASK-000` should be driven by targeted follow-up questions instead of asking the user to rewrite a full brief. In full mode, the same approval flow applies, but with heavier repo docs and stronger planning checkpoints.
+
 ## Full vs Lite
 
 ### Full
