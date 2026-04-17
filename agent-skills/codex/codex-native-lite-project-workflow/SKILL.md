@@ -40,8 +40,6 @@ If `AGENTS.md` does not exist, create it with exactly this compact workflow sect
 
 ## Workflow Defaults
 
-Default to the lite workflow for this repository.
-
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
 - In later sessions, read `AGENTS.md`, `STATUS.md`, and the current task card first.
 - Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.

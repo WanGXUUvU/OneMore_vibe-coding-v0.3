@@ -50,8 +50,6 @@ allowed-tools: Read,Write,Bash,Grep
 
 ## Workflow Defaults
 
-Default to the full workflow for this repository.
-
 - Use `specs/TASK-000.md` when the task is not yet executable.
 - Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
 - Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
