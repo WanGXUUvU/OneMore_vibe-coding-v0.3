@@ -43,10 +43,13 @@ If `AGENTS.md` does not exist, create it with exactly this compact workflow sect
 Default to `codex-native-lite-project-workflow`.
 
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
+- In later sessions, read `AGENTS.md`, `STATUS.md`, and the current task card first.
+- Reload the full workflow skill only when workflow context is missing or the task needs re-scoping.
 - Prefer the smallest closed loop.
 - Stop at required gates before sync.
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task.
+- In later sessions, `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
 If `AGENTS.md` already exists, update or append only the `## Workflow Defaults` section without removing unrelated instructions.
@@ -54,14 +57,37 @@ Never overwrite an existing instruction file unless the user explicitly requests
 
 ## Execution Flow
 
-1. Read current repo state.
-2. If the project is new or the scope is unclear, create `specs/TASK-000.md` first.
-3. Use `TASK-000` to confirm: 目标 / 现状 / 角色 / 约束 / Out of Scope / Done when.
-4. Otherwise open or create one normal task card (`specs/TASK-xxx.md`).
-5. Confirm scope in one short block (目标 / In Scope / Out of Scope).
-6. Execute implementation in the smallest closed loop.
-7. Finish with `Verify` evidence and short `Review` notes.
-8. Stop for user confirmation before sync-level updates.
+Use this skill in two phases:
+
+1. Bootstrap session.
+Use the skill to initialize the repo, create the minimum workflow files, and complete `TASK-000` until the repo reaches `Brainstorm Review`.
+
+2. Delivery sessions.
+In later sessions, prefer reading `AGENTS.md`, `STATUS.md`, and the current task card before doing any work. Do not reload the skill unless workflow context is missing, the task needs re-scoping, or the repo must be re-initialized.
+
+3. If the project is new or the scope is unclear, create `specs/TASK-000.md` first.
+
+4. Use `TASK-000` to produce a real working brief.
+Capture enough detail to support implementation choices, not just a project title.
+Drive `TASK-000` by targeted follow-up questions. Do not ask the user to rewrite the whole brief when only some fields are missing.
+
+5. Once `TASK-000` is approved, open or create one normal task card (`specs/TASK-xxx.md`) only after explicit task-card approval.
+Do not treat user clarification as approval. `create-task` approves creating `TASK-001`. `start-implementation` approves implementation work.
+
+6. After `TASK-001` exists, confirm scope in one short block (`Goal / In Scope / Out of Scope`) and stop at `Implementation Approval`.
+Do not start implementation until the user explicitly gives implementation approval.
+
+7. Implement the smallest closed loop that satisfies the current task card.
+Do not expand scope or silently bundle nearby improvements.
+
+8. Finish with `Verify` evidence and short `Review` notes.
+
+9. Stop for user confirmation at `Sync Review`.
+At `Sync Review`, the next move must be explicit:
+- close the current task as accepted
+- keep working inside the current task
+- or create the next task card
+Do not treat review comments or clarifying follow-ups as sync approval.
 
 ## Capability Gate
 
@@ -74,18 +100,36 @@ Never overwrite an existing instruction file unless the user explicitly requests
 - If the goal, scope, or Done when is unclear, create `specs/TASK-000.md` first.
 - Use this fixed structure for `TASK-000`:
   1. 项目名称 + 目标
-  2. 现状与背景
-  3. 用户角色
-  4. 技术约束
-  5. Out of Scope
-  6. Done when
-- Update `SPEC.md` and `STATUS.md`, then stop at `Brainstorm Review`.
+  2. 用户角色与使用场景
+  3. 核心页面 / 核心流程
+  4. 首版范围（In Scope）
+  5. 明确不做（Out of Scope）
+  6. 技术方向与关键依赖
+  7. 风险 / 待确认问题
+  8. Done when
+- `TASK-000` must be detailed enough to answer:
+  - what the user will actually do first
+  - what the MVP includes and excludes
+  - what technical direction is currently assumed
+  - what decisions are still open
+- When `TASK-000` is incomplete, list the missing fields and ask focused follow-up questions for those fields.
+- Prefer 1 to 5 short questions per round. Ask only for information that is still missing or uncertain.
+- If the user gives a partial answer, update `TASK-000`, then continue asking only about the remaining gaps.
+- Keep asking until the task can enter `Brainstorm Review` without guessing core scope, stack, or done conditions.
+- Update `STATUS.md`, and update `SPEC.md` only when the extra detail materially helps later sessions.
+- Stop at `Brainstorm Review` once the repo has enough information to create `TASK-001` without guessing core scope or stack.
 
 ## Gates
 
 - Stop at `Brainstorm Review` before implementation if the task is not yet executable.
+- Stop at `Implementation Approval` after the task card is ready and before writing code.
 - Stop at `Plan Review` only when the task must be escalated beyond normal lite execution.
 - Stop at `Sync Review` after verification and review, before syncing milestone docs.
+
+User clarification at a gate is not the same as gate approval.
+- `create-task` passes the current gate only far enough to create or update the next task card.
+- `start-implementation` passes the current gate for implementation work.
+- Do not treat `proceed` as implementation approval.
 
 ## Lane Policy
 
@@ -102,6 +146,18 @@ Never overwrite an existing instruction file unless the user explicitly requests
 - Do not declare done before `Verify` and `Review`.
 - Update `BUILD_PLAN.md` only for milestone-level changes.
 - Do not skip `TASK-000` when the project starts from scratch or the goal is still fuzzy.
+- In new delivery sessions, prefer continuing from `AGENTS.md`, `STATUS.md`, and the current task card instead of re-running bootstrap.
+- User clarification does not by itself authorize the next gate.
+- During `TASK-000`, do not ask for a full replacement brief by default. Ask structured follow-up questions based on the missing fields.
+- During `TASK-000`, if the user answer is incomplete or uncertain, continue the follow-up loop instead of moving on.
+- After `Brainstorm Review`, do not create `TASK-001` without `create-task` or equivalent explicit task-card approval.
+- After `TASK-001` is created, move to `Implementation Approval` and wait there until implementation is explicitly approved.
+- After `Brainstorm Review`, do not edit implementation files or start execution without `start-implementation` or equivalent explicit implementation approval.
+- After `Implementation Approval`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Plan Review`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Sync Review`, do not sync milestone docs or advance to the next task without explicit sync approval.
+- After `Sync Review`, the allowed next moves are: accept the task, continue the same task, or create the next task card.
+- Treat `proceed` as ambiguous. Ask whether the user wants `create-task` or `start-implementation`.
 
 ## Verify Minimum
 
@@ -121,6 +177,8 @@ Never overwrite an existing instruction file unless the user explicitly requests
 - Use `$codex-native-lite-project-workflow` to bootstrap a repo with minimal process.
 - Use `$codex-native-lite-project-workflow` to continue current task in lite mode.
 - Use `$codex-native-lite-project-workflow` to report status and next action.
+- Use `create-task` to approve creating the next task card without starting implementation.
+- Use `start-implementation` to approve implementation after the task card is ready.
 
 ## Status Output
 

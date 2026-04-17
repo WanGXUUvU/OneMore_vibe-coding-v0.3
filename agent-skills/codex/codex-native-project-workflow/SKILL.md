@@ -48,6 +48,7 @@ Default to `codex-native-project-workflow`.
 - Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task card.
+- `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
 If `AGENTS.md` already exists, update or append only the `## Workflow Defaults` section without overwriting unrelated project guidance.
@@ -74,6 +75,7 @@ Capture these six items in order:
 - `技术约束`
 - `Out of Scope`
 - `Done when`
+Drive `TASK-000` by targeted follow-up questions. Do not ask the user to replace the whole brief when only some decisions are missing.
 
 5. Turn brainstorming into repo docs.
 Update:
@@ -83,7 +85,7 @@ Update:
 - `STATUS.md` with the current phase, gate, lane, and notes
 
 6. Stop at `Brainstorm Review`.
-After `TASK-000` is good enough to produce a real implementation task, stop and wait for the user before continuing.
+After `TASK-000` is good enough to produce a real implementation task, stop and wait for explicit user confirmation before continuing. Clarifying input does not by itself authorize `TASK-001`. `create-task` approves creating `TASK-001`. `start-implementation` approves implementation work.
 
 7. Run normal task execution.
 For `TASK-001+`, always fill:
@@ -98,19 +100,32 @@ For `TASK-001+`, always fill:
 
 Use `Standard` only when the environment supports it and the task needs an explicit plan. Use `Strict` for migrations, destructive changes, external integration verification, or broad multi-module edits.
 
-9. Do not close without review.
+9. After the task card and lane decision are ready, stop at `Implementation Approval`.
+Do not start implementation until the user explicitly approves execution. For `Standard` and `Strict`, this approval comes after `Plan Review`.
+
+10. Do not close without review.
 Every implementation task must end with:
 - `Verify`
 - `Review`
 
-10. Stop at `Sync Review`, then sync.
-After presenting results, wait for the user before updating milestone documents or moving to the next task.
+11. Stop at `Sync Review`, then sync.
+After presenting results, wait for explicit user confirmation before updating milestone documents or moving to the next task.
+At `Sync Review`, the next move must be explicit:
+- close the current task as accepted
+- keep working inside the current task
+- or create the next task card
 
 ## Gates
 
 - `Brainstorm Review`: stop after initial docs and task framing are ready
+- `Implementation Approval`: stop after the task card is ready and before writing code
 - `Plan Review`: stop after planning in `Standard` or `Strict`
 - `Sync Review`: stop after implementation review and before final sync
+
+User clarification at a gate is not the same as gate approval.
+- `create-task` passes the current gate only far enough to create or update the next task card.
+- `start-implementation` passes the current gate for implementation work.
+- Do not treat `proceed` as implementation approval.
 
 ## Lane Policy
 
@@ -125,12 +140,25 @@ After presenting results, wait for the user before updating milestone documents 
 - Do not expand into unrelated directories or side quests.
 - Update `BUILD_PLAN.md` only for milestone-level changes.
 - Prefer the smallest closed loop that still leaves the repo in a reviewable state.
+- User clarification does not by itself authorize the next gate.
+- During `TASK-000`, do not ask for a full replacement brief by default. Ask structured follow-up questions based on the missing fields.
+- During `TASK-000`, if the user answer is incomplete or uncertain, continue the follow-up loop instead of moving on.
+- After `Brainstorm Review`, do not create `TASK-001` without `create-task` or equivalent explicit task-card approval.
+- After `TASK-001` is created, move to `Implementation Approval` and wait there until implementation is explicitly approved.
+- After `Brainstorm Review`, do not edit implementation files or start execution without `start-implementation` or equivalent explicit implementation approval.
+- After `Implementation Approval`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Plan Review`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Sync Review`, do not sync milestone docs or advance to the next task without explicit sync approval.
+- After `Sync Review`, the allowed next moves are: accept the task, continue the same task, or create the next task card.
+- Treat `proceed` as ambiguous. Ask whether the user wants `create-task` or `start-implementation`.
 
 ## Quick Prompts
 
 - `Use $codex-native-project-workflow to bootstrap this repo from a vague product idea.`
 - `Use $codex-native-project-workflow to continue the current task and choose the right lane.`
 - `Use $codex-native-project-workflow to review the repo state, update STATUS, and prepare the next task.`
+- `Use create-task to approve creating the next task card without starting implementation.`
+- `Use start-implementation to approve implementation after the task card and plan are ready.`
 
 ## Status Output
 

@@ -50,6 +50,7 @@ Default to `claude-native-project-workflow`.
 - Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task card.
+- `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
 If `CLAUDE.md` already exists, update or append only the `## Workflow Defaults` section without replacing unrelated project rules.
@@ -59,50 +60,73 @@ Never overwrite the entire file unless the user explicitly asks for that.
 
 Follow this loop:
 
-1. Read current repo state.
-2. Read workflow docs first, then current task card.
-3. Run capability gate.
-4. If subagents are unavailable, declare `Single-agent serial fallback` and continue.
-5. If task is not executable, start brainstorming via `specs/TASK-000.md`.
-6. Convert brainstorming output into root docs.
-7. Stop at required human gates.
-8. Execute task by lane policy.
-9. Finish with Verify/Review, then stop at Sync Review before final sync.
+1. Read the current repo state.
+Read the workflow files first, then the current task card.
 
-### Fixed brainstorming structure (in order)
-1. 项目名称 + 目标
-2. 现状与背景
-3. 用户角色
-4. 技术约束
-5. Out of Scope
-6. Done when
+2. Do a capability gate.
+Decide whether subagents are available. If not, declare `Single-agent serial fallback` and continue.
 
-### Turn brainstorming into repo docs
+3. Start with brainstorming when the task is not yet executable.
+Use `specs/TASK-000.md` when the project starts from a vague idea, when root docs are missing, or when the current task lacks a clear goal, scope, or done conditions.
+
+4. Use the fixed brainstorming structure.
+Capture these six items in order:
+- `项目名称 + 目标`
+- `现状与背景`
+- `用户角色`
+- `技术约束`
+- `Out of Scope`
+- `Done when`
+Drive `TASK-000` by targeted follow-up questions. Do not ask the user to replace the whole brief when only some decisions are missing.
+
+5. Turn brainstorming into repo docs.
 Update:
-- `SPEC.md` with six-part structure
-- `DECISIONS.md` with key tradeoffs
+- `SPEC.md` with the six-part structure
+- `DECISIONS.md` with the first important tradeoffs
 - `BUILD_PLAN.md` with at least `M1`
-- `STATUS.md` with current phase, gate, lane, and notes
+- `STATUS.md` with the current phase, gate, lane, and notes
 
-Then stop at `Brainstorm Review` and wait for user confirmation.
+6. Stop at `Brainstorm Review`.
+After `TASK-000` is good enough to produce a real implementation task, stop and wait for explicit user confirmation before continuing. Clarifying input does not by itself authorize `TASK-001`. `create-task` approves creating `TASK-001`. `start-implementation` approves implementation work.
 
-### Normal task execution (`TASK-001+`)
-Always fill:
+7. Run normal task execution.
+For `TASK-001+`, always fill:
 - `Brainstorm Summary`
 - `Lane Decision`
 - `Plan Gate`
 
-### Do not close without review
+8. Choose the lane.
+- `Fast`: small, low-risk work; `generator -> evaluator`
+- `Standard`: multi-step or cross-file work; `planner -> Plan Review -> generator -> evaluator`
+- `Strict`: irreversible or high-risk work; `planner -> Plan Review -> generator -> evaluator -> (fixer -> evaluator)`
+
+Use `Standard` only when the environment supports it and the task needs an explicit plan. Use `Strict` for migrations, destructive changes, external integration verification, or broad multi-module edits.
+
+9. After the task card and lane decision are ready, stop at `Implementation Approval`.
+Do not start implementation until the user explicitly approves execution. For `Standard` and `Strict`, this approval comes after `Plan Review`.
+
+10. Do not close without review.
 Every implementation task must end with:
 - `Verify`
 - `Review`
 
-Then stop at `Sync Review`. After user confirmation, sync milestone docs and/or move to next task.
+11. Stop at `Sync Review`, then sync.
+After presenting results, wait for explicit user confirmation before updating milestone documents or moving to the next task.
+At `Sync Review`, the next move must be explicit:
+- close the current task as accepted
+- keep working inside the current task
+- or create the next task card
 
 ## Gates
 - `Brainstorm Review`: stop after initial docs and framing are ready
+- `Implementation Approval`: stop after the task card is ready and before writing code
 - `Plan Review`: stop after planning in Standard/Strict
 - `Sync Review`: stop after implementation review and before final sync
+
+User clarification at a gate is not the same as gate approval.
+- `create-task` passes the current gate only far enough to create or update the next task card.
+- `start-implementation` passes the current gate for implementation work.
+- Do not treat `proceed` as implementation approval.
 
 ## Lane Policy
 
@@ -119,11 +143,24 @@ Use Strict for migrations, destructive changes, external integration validation,
 - Do not expand into unrelated directories or side quests.
 - Update `BUILD_PLAN.md` only for milestone-level changes.
 - Prefer the smallest closed loop that still leaves repo reviewable.
+- User clarification does not by itself authorize the next gate.
+- During `TASK-000`, do not ask for a full replacement brief by default. Ask structured follow-up questions based on the missing fields.
+- During `TASK-000`, if the user answer is incomplete or uncertain, continue the follow-up loop instead of moving on.
+- After `Brainstorm Review`, do not create `TASK-001` without `create-task` or equivalent explicit task-card approval.
+- After `TASK-001` is created, move to `Implementation Approval` and wait there until implementation is explicitly approved.
+- After `Brainstorm Review`, do not edit implementation files or start execution without `start-implementation` or equivalent explicit implementation approval.
+- After `Implementation Approval`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Plan Review`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
+- After `Sync Review`, do not sync milestone docs or advance to the next task without explicit sync approval.
+- After `Sync Review`, the allowed next moves are: accept the task, continue the same task, or create the next task card.
+- Treat `proceed` as ambiguous. Ask whether the user wants `create-task` or `start-implementation`.
 
 ## Quick Prompts
 - Use `$claude-native-project-workflow` to bootstrap an empty repo from a vague idea.
 - Use `$claude-native-project-workflow` to continue the current task and choose lane.
 - Use `$claude-native-project-workflow` to review repo state, update STATUS, and prepare next task.
+- Use `create-task` to approve creating the next task card without starting implementation.
+- Use `start-implementation` to approve implementation after the task card and plan are ready.
 
 This skill does not require bundled scripts, references, or assets unless the workflow grows more specialized later.
 
