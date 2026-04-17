@@ -17,18 +17,6 @@ A curated set of project-workflow skills for modern AI coding agents.
 
 This repository packages the same workflow family across multiple hosts so you can keep one project-operating model while switching between tools.
 
-Supported hosts:
-
-- Codex
-- Claude Code
-- GitHub Copilot
-- CodeBuddy
-
-Each host includes two variants:
-
-- `full`: a structured workflow with planning documents, task cards, lane selection, verification, review, and human gates
-- `lite`: a lighter version that keeps the same mental model with less process overhead
-
 ## Quick Start
 
 1. Choose your host: Codex, Claude Code, GitHub Copilot, or CodeBuddy.
@@ -42,7 +30,17 @@ Common install targets:
 - GitHub Copilot: `~/.copilot/skills/` or repo-local `.github/skills/`
 - CodeBuddy: `~/.codebuddy/skills/`
 
-Detailed install commands and examples live in [agent-skills/README.md](./agent-skills/README.md).
+## Hosts
+
+- Codex
+- Claude Code
+- GitHub Copilot
+- CodeBuddy
+
+Each host includes two variants:
+
+- `full`: a structured workflow with planning documents, task cards, lane selection, verification, review, and human gates
+- `lite`: a lighter version that keeps the same mental model with less process overhead
 
 ## Why This Repo Exists
 
@@ -57,45 +55,6 @@ These skills are designed to give agents a repeatable way to move a project forw
 5. stop at explicit human decision points
 
 The goal is not more ceremony. The goal is cleaner execution.
-
-## Included Skills
-
-### Codex
-- `codex-native-project-workflow`
-- `codex-native-lite-project-workflow`
-
-### Claude Code
-- `claude-native-project-workflow`
-- `claude-native-lite-project-workflow`
-
-### GitHub Copilot
-- `copilot-native-project-workflow`
-- `copilot-native-lite-project-workflow`
-
-### CodeBuddy
-- `codebuddy-native-project-workflow`
-- `codebuddy-native-lite-project-workflow`
-
-## Repository Layout
-
-```text
-agent-skills/
-├── README.md
-├── codex/
-│   ├── codex-native-project-workflow/
-│   └── codex-native-lite-project-workflow/
-├── claude/
-│   ├── claude-native-project-workflow/
-│   └── claude-native-lite-project-workflow/
-├── copilot/
-│   ├── copilot-native-project-workflow/
-│   └── copilot-native-lite-project-workflow/
-└── codebuddy/
-    ├── codebuddy-native-project-workflow/
-    └── codebuddy-native-lite-project-workflow/
-```
-
-For installation details, host-specific notes, and usage examples, see [agent-skills/README.md](./agent-skills/README.md).
 
 ## Workflow Model
 
@@ -130,9 +89,7 @@ Choose the lite workflow when you want:
 - faster iteration loops
 - a simpler default for small and medium-sized work
 
-## Quick Start
-
-Copy the skill folders for your host into its local skills directory.
+## Install
 
 ### Codex
 
@@ -198,24 +155,7 @@ Use $copilot-native-lite-project-workflow to keep the workflow lightweight.
 使用 $codebuddy-native-lite-project-workflow 以精简模式继续当前任务
 ```
 
-## Design Principles
-
-- One workflow family, adapted across hosts
-- Clear host-specific naming
-- Symmetry between `full` and `lite`
-- Shared semantics without forcing one metadata format everywhere
-
-## Publishing Scope
-
-If you want this repository to stay clean and GitHub-friendly, the recommended publish scope is:
-
-- `README.md`
-- `agent-skills/`
-
-That keeps the repo focused on the skills themselves rather than local experiments, working directories, or host-specific personal setup.
-
 ## Notes
-
-- The skill folders in this repo are snapshots of live local skills.
-- If you continue iterating on your local versions, sync the updated copies back here before publishing a new revision.
+- This repository intentionally keeps only the published skill snapshots and the minimal docs needed to install them.
+- The skill folders in this repo are snapshots of live local skills. Sync updated copies back here before publishing a new revision.
 - Host loading behavior differs slightly, but the workflow semantics are intentionally aligned.

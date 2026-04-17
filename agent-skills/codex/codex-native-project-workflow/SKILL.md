@@ -7,9 +7,16 @@ description: Full Codex-native project workflow. Use when Codex should manage or
 
 ## Overview
 
-Use this skill to run a small project operating system inside the repo. It turns a vague request into a documented task loop, then keeps execution, review, and sync aligned.
+Use this skill when Codex should run a full repo operating system. It turns a vague request into explicit project docs, task cards, lane selection, and gated execution.
 
-## Required Files
+## When to Use
+
+- The request starts from a vague idea or incomplete scope.
+- The repo needs durable project docs, not just a one-off task loop.
+- The work spans multiple files, modules, or milestones.
+- The task needs explicit planning, human gates, or risk control.
+
+## Repo Files
 
 Create or maintain these files at repo root unless the user already has an equivalent structure:
 
@@ -25,18 +32,28 @@ Create or maintain these files at repo root unless the user already has an equiv
 
 On the first meaningful invocation in a repository, create `AGENTS.md` if it does not already exist so the workflow persists for later sessions.
 
-The generated file should be short and project-facing. It should capture:
-- that this repo defaults to `codex-native-project-workflow`
-- when `TASK-000` is required
-- the lane model: `Fast`, `Standard`, `Strict`
-- required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`
-- the rule that implementation must end with `Verify` and `Review`
+Keep `AGENTS.md` minimal. It is a persistent memory file, not a second copy of the skill. Do not add generic coding advice, style slogans, or instructions that trigger expensive work on every task.
 
-Do not dump the entire skill into `AGENTS.md`. Write a compact default-operating summary instead.
-If `AGENTS.md` already exists, update or append a workflow section without overwriting unrelated project guidance.
+If `AGENTS.md` does not exist, create it with exactly this compact workflow section:
+
+```md
+# AGENTS.md
+
+## Workflow Defaults
+
+Default to `codex-native-project-workflow`.
+
+- Use `specs/TASK-000.md` when the task is not yet executable.
+- Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
+- Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
+- End implementation with `Verify` and `Review`.
+- Do not expand scope beyond the current task card.
+```
+
+If `AGENTS.md` already exists, update or append only the `## Workflow Defaults` section without overwriting unrelated project guidance.
 Never replace an existing instruction file wholesale unless the user explicitly asks for that.
 
-## Workflow
+## Execution Flow
 
 Follow this loop:
 
@@ -95,6 +112,12 @@ After presenting results, wait for the user before updating milestone documents 
 - `Plan Review`: stop after planning in `Standard` or `Strict`
 - `Sync Review`: stop after implementation review and before final sync
 
+## Lane Policy
+
+- `Fast`: small, low-risk work; `generator -> evaluator`
+- `Standard`: multi-step or cross-file work; `planner -> Plan Review -> generator -> evaluator`
+- `Strict`: irreversible or high-risk work; `planner -> Plan Review -> generator -> evaluator -> fixer -> evaluator`
+
 ## Hard Rules
 
 - Do not code without a task card.
@@ -108,5 +131,15 @@ After presenting results, wait for the user before updating milestone documents 
 - `Use $codex-native-project-workflow to bootstrap this repo from a vague product idea.`
 - `Use $codex-native-project-workflow to continue the current task and choose the right lane.`
 - `Use $codex-native-project-workflow to review the repo state, update STATUS, and prepare the next task.`
+
+## Status Output
+
+Whenever asked “where are we now”, report exactly:
+1. Current Phase
+2. Current Task
+3. Current Gate
+4. Selected Lane
+5. Blocking issue (or None)
+6. Next action
 
 This skill does not require bundled scripts, references, or assets unless the workflow grows more specialized later.

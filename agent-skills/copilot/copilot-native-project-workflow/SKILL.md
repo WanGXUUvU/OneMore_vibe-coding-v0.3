@@ -7,9 +7,16 @@ description: Full Copilot-native project workflow. Use when the user wants GitHu
 
 ## Overview
 
-Use this skill to run a repo-level project workflow inside GitHub Copilot. It turns a vague request into a documented task loop, then keeps execution, review, and sync aligned.
+Use this skill when GitHub Copilot should run a full repo operating system. It turns a vague request into explicit project docs, task cards, lane selection, and gated execution.
 
-## Required Files
+## When to Use
+
+- The request starts from a vague idea or incomplete scope.
+- The repo needs durable project docs, not just a one-off task loop.
+- The work spans multiple files, modules, or milestones.
+- The task needs explicit planning, human gates, or risk control.
+
+## Repo Files
 
 Create or maintain these files at repo root unless the repo already has an equivalent structure:
 
@@ -25,18 +32,28 @@ Create or maintain these files at repo root unless the repo already has an equiv
 
 On the first meaningful invocation in a repository, create `.github/copilot-instructions.md` if it does not already exist so the workflow persists for later Copilot sessions.
 
-The generated file should be short and project-facing. It should capture:
-- that this repo defaults to `copilot-native-project-workflow`
-- when `TASK-000` is required
-- the lane model: `Fast`, `Standard`, `Strict`
-- required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`
-- the rule that implementation must end with `Verify` and `Review`
+Keep `.github/copilot-instructions.md` minimal. It is a persistent memory file, not a second copy of the skill. Do not add generic coding advice, style slogans, or instructions that trigger expensive work on every task.
 
-Do not dump the entire skill into `.github/copilot-instructions.md`. Write a compact default-operating summary instead.
-If the file already exists, append or refine a workflow section without replacing unrelated repository instructions.
+If `.github/copilot-instructions.md` does not exist, create it with exactly this compact workflow section:
+
+```md
+# Copilot Instructions
+
+## Workflow Defaults
+
+Default to `copilot-native-project-workflow`.
+
+- Use `specs/TASK-000.md` when the task is not yet executable.
+- Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
+- Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
+- End implementation with `Verify` and `Review`.
+- Do not expand scope beyond the current task card.
+```
+
+If the file already exists, update or append only the `## Workflow Defaults` section without replacing unrelated repository instructions.
 Never overwrite the entire instruction file unless the user explicitly asks for replacement.
 
-## Workflow
+## Execution Flow
 
 Follow this loop:
 
@@ -95,6 +112,12 @@ After presenting results, wait for the user before updating milestone documents 
 - `Plan Review`: stop after planning in `Standard` or `Strict`
 - `Sync Review`: stop after implementation review and before final sync
 
+## Lane Policy
+
+- `Fast`: small, low-risk work; `generator -> evaluator`
+- `Standard`: multi-step or cross-file work; `planner -> Plan Review -> generator -> evaluator`
+- `Strict`: irreversible or high-risk work; `planner -> Plan Review -> generator -> evaluator -> (fixer -> evaluator)`
+
 ## Hard Rules
 
 - Do not code without a task card.
@@ -105,8 +128,9 @@ After presenting results, wait for the user before updating milestone documents 
 
 ## Quick Prompts
 
-- Use this skill when the user asks for a full workflow in GitHub Copilot.
-- For repo-local reuse, keep the workspace skill at `.github/skills/copilot-native-project-workflow/SKILL.md`.
+- `Use $copilot-native-project-workflow to bootstrap this repo from a vague product idea.`
+- `Use $copilot-native-project-workflow to continue the current task and choose the right lane.`
+- `Use $copilot-native-project-workflow to review the repo state, update STATUS, and prepare the next task.`
 
 ## Status Output
 

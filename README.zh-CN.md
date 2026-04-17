@@ -17,18 +17,6 @@
 
 这个仓库把同一套 workflow family 分别适配到了多个宿主上，让你在切换工具时，仍然可以保持一致的项目推进方式。
 
-当前支持：
-
-- Codex
-- Claude Code
-- GitHub Copilot
-- CodeBuddy
-
-每个宿主都提供两个版本：
-
-- `full`：强调文档骨架、车道选择、验证、评审和人工 gate 的完整工作流
-- `lite`：保留同样心智模型，但减少默认流程负担的轻量工作流
-
 ## Quick Start
 
 1. 先选择你使用的宿主：Codex、Claude Code、GitHub Copilot 或 CodeBuddy。
@@ -42,7 +30,17 @@
 - GitHub Copilot：`~/.copilot/skills/` 或仓库内 `.github/skills/`
 - CodeBuddy：`~/.codebuddy/skills/`
 
-更详细的安装命令和示例见 [agent-skills/README.zh-CN.md](./agent-skills/README.zh-CN.md)。
+## 支持宿主
+
+- Codex
+- Claude Code
+- GitHub Copilot
+- CodeBuddy
+
+每个宿主都提供两个版本：
+
+- `full`：强调文档骨架、车道选择、验证、评审和人工 gate 的完整工作流
+- `lite`：保留同样心智模型，但减少默认流程负担的轻量工作流
 
 ## 为什么做这个仓库
 
@@ -57,45 +55,6 @@
 5. 在关键节点停下来等待人工决策
 
 它不是为了增加流程感，而是为了让执行更干净、更稳定。
-
-## Included Skills
-
-### Codex
-- `codex-native-project-workflow`
-- `codex-native-lite-project-workflow`
-
-### Claude Code
-- `claude-native-project-workflow`
-- `claude-native-lite-project-workflow`
-
-### GitHub Copilot
-- `copilot-native-project-workflow`
-- `copilot-native-lite-project-workflow`
-
-### CodeBuddy
-- `codebuddy-native-project-workflow`
-- `codebuddy-native-lite-project-workflow`
-
-## 仓库结构
-
-```text
-agent-skills/
-├── README.md
-├── codex/
-│   ├── codex-native-project-workflow/
-│   └── codex-native-lite-project-workflow/
-├── claude/
-│   ├── claude-native-project-workflow/
-│   └── claude-native-lite-project-workflow/
-├── copilot/
-│   ├── copilot-native-project-workflow/
-│   └── copilot-native-lite-project-workflow/
-└── codebuddy/
-    ├── codebuddy-native-project-workflow/
-    └── codebuddy-native-lite-project-workflow/
-```
-
-更详细的安装说明、宿主差异和使用示例见 [agent-skills/README.zh-CN.md](./agent-skills/README.zh-CN.md)。
 
 ## Workflow Model
 
@@ -130,9 +89,7 @@ agent-skills/
 - 更强调快速闭环
 - 希望把它作为小中型项目的默认模式
 
-## Quick Start
-
-按你使用的宿主，把对应 skill 目录复制到本机的 skills 目录即可。
+## 安装
 
 ### Codex
 
@@ -198,26 +155,7 @@ Use $copilot-native-lite-project-workflow to keep the workflow lightweight.
 使用 $codebuddy-native-lite-project-workflow 以精简模式继续当前任务
 ```
 
-## 设计原则
-
-- 同一套 workflow family，分别适配不同宿主
-- 命名上明确标识宿主
-- `full` 与 `lite` 保持镜像关系
-- 语义尽量统一，但不强行把所有宿主压成一种 metadata 格式
-
-## 推荐发布范围
-
-如果你希望这个仓库在 GitHub 上保持干净，建议主要提交：
-
-- `README.md`
-- `README.zh-CN.md`
-- `agent-skills/`
-- `docs/assets/`
-
-这样首页会聚焦在 skills 本身，而不是本地实验目录或个人工作区结构。
-
 ## Notes
-
-- 仓库里的 skill 目录是本地 live skill 的快照。
-- 如果你在本机继续迭代，发布新版本前记得把最新版本同步回这里。
+- 这个仓库现在只保留发布用的 skill 快照和最小安装说明。
+- 仓库中的这些 skill 是快照版本。如果你后续更新了本机 live 版本，发布前记得同步回来。
 - 不同宿主的加载方式会略有差异，但 workflow 语义已经尽量对齐。

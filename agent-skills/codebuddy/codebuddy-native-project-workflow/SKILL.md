@@ -25,7 +25,7 @@ allowed-tools: Read,Write,Bash,Grep
 5. 用户说"收口时必须有 verify/review 证据"时触发
 6. 关键词匹配：完整工作流、标准化流程、TASK-000、TASK-001、Brainstorm Review、Plan Review、Sync Review
 
-## Required Files（必备文件）
+## Repo Files（仓库文件）
 
 除非仓库已有等价结构，否则在仓库根目录维护以下文件：
 
@@ -41,18 +41,28 @@ allowed-tools: Read,Write,Bash,Grep
 
 在仓库内第一次有意义地调用本技能时，如果 `CODEBUDDY.md` 不存在，就应主动创建它，让这套 workflow 在后续会话中持续生效。
 
-生成的 `CODEBUDDY.md` 应该保持简短、面向项目长期约束，只需要写清：
-- 当前仓库默认采用 `codebuddy-native-project-workflow`
-- 什么时候必须先做 `TASK-000`
-- 当前仓库采用的车道模型：`Fast`、`Standard`、`Strict`
-- 必须停下来的 gate：`Brainstorm Review`、`Plan Review`、`Sync Review`
-- 收口前必须完成 `Verify` 和 `Review`
+保持 `CODEBUDDY.md` 极简。它是持久化记忆文件，不是 skill 的第二份副本。不要写通用编码建议、风格口号，或任何会在每个任务里触发高成本操作的指令。
 
-不要把整个 skill 原文复制进 `CODEBUDDY.md`，只写适合长期保留的默认行为摘要。
-如果 `CODEBUDDY.md` 已存在，应追加或更新 workflow 区块，而不是覆盖无关项目规则。
+如果 `CODEBUDDY.md` 不存在，就按下面这段精简 workflow 区块创建：
+
+```md
+# CODEBUDDY.md
+
+## Workflow Defaults
+
+Default to `codebuddy-native-project-workflow`.
+
+- Use `specs/TASK-000.md` when the task is not yet executable.
+- Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
+- Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
+- End implementation with `Verify` and `Review`.
+- Do not expand scope beyond the current task card.
+```
+
+如果 `CODEBUDDY.md` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关项目规则。
 除非用户明确要求，不要整体替换现有 `CODEBUDDY.md`。
 
-## Workflow（完整流程）
+## Execution Flow（执行流程）
 
 按以下闭环执行：
 
@@ -105,6 +115,12 @@ allowed-tools: Read,Write,Bash,Grep
 - `Brainstorm Review`：初始文档和任务边界成形后停止
 - `Plan Review`：`Standard` 或 `Strict` 输出计划后停止
 - `Sync Review`：实现评审完成后、最终同步前停止
+
+## Lane Policy（车道策略）
+
+- `Fast`：小改动、低风险，`generator -> evaluator`
+- `Standard`：多步骤、跨文件，`planner -> Plan Review -> generator -> evaluator`
+- `Strict`：高风险、不可逆，`planner -> Plan Review -> generator -> evaluator -> (fixer -> evaluator)`
 
 ## Hard Rules（硬约束）
 
