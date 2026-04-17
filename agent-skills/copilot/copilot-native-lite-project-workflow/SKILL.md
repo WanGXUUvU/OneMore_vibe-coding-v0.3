@@ -41,11 +41,11 @@ If `.github/copilot-instructions.md` does not exist, create it with exactly this
 
 ## Workflow Defaults
 
-Default to `copilot-native-lite-project-workflow`.
+Default to the lite workflow for this repository.
 
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
 - In later sessions, read `.github/copilot-instructions.md`, `STATUS.md`, and the current task card first.
-- Reload the full workflow skill only when workflow context is missing or the task needs re-scoping.
+- Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.
 - Prefer the smallest closed loop.
 - Stop at required gates before sync.
 - End implementation with `Verify` and `Review`.

@@ -41,7 +41,7 @@ If `.github/copilot-instructions.md` does not exist, create it with exactly this
 
 ## Workflow Defaults
 
-Default to `copilot-native-project-workflow`.
+Default to the full workflow for this repository.
 
 - Use `specs/TASK-000.md` when the task is not yet executable.
 - Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
