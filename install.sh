@@ -12,7 +12,8 @@ trap cleanup EXIT
 
 echo ""
 echo "  Cloning OneMore_vibe-coding..."
-git clone --depth 1 "$REPO" "$TMP_DIR"
+git clone --depth 1 "$REPO" "$TMP_DIR" 2>/dev/null
+echo "  Done."
 
 cd "$TMP_DIR"
 chmod +x generate.sh
