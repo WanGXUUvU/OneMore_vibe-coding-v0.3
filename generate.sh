@@ -365,13 +365,13 @@ install_skills() {
     echo -e "\n  ${BOLD}安装到项目级${RESET}  ${DIM}$PWD/${RESET}\n"
     local copilot_dir="$PWD/.github/skills"
     local claude_dir="$PWD/.claude/skills"
-    local codex_dir="$PWD/.agents/skills"
+    local codex_dir="$PWD/.codex/skills"
     local codebuddy_dir="$PWD/.codebuddy/skills"
   else
     echo -e "\n  ${BOLD}安装到用户级${RESET}  ${DIM}~/${RESET}\n"
     local copilot_dir="$HOME/.copilot/skills"
     local claude_dir="$HOME/.claude/skills"
-    local codex_dir="$HOME/.agents/skills"
+    local codex_dir="$HOME/.codex/skills"
     local codebuddy_dir="$HOME/.codebuddy/skills"
   fi
 
