@@ -1,20 +1,20 @@
 ---
-name: copilot-native-lite-project-workflow
-description: Lite Copilot-native project workflow. Use when the user wants a simpler fixed process, minimal docs, quick delivery loop, or a lightweight workflow for GitHub Copilot that still keeps task cards and hard gates.
+name: {{SKILL_LITE}}
+description: Lite {{PLATFORM_NAME}}-native project workflow. Use when the user wants a simpler fixed process, minimal docs, quick delivery loop, or a lightweight workflow for {{PLATFORM_NAME}} that still keeps task cards and hard gates.
 ---
 
-# Copilot Native Lite Project Workflow
+# {{PLATFORM_NAME}} Native Lite Project Workflow
 
 ## Overview
 
-Use this skill when GitHub Copilot should keep the workflow lightweight. It is for fast, bounded execution with task cards and review discipline, but without defaulting to a full repo operating system.
+Use this skill when {{PLATFORM_NAME}} should keep the workflow lightweight. It is for fast, bounded execution with task cards and review discipline, but without defaulting to a full repo operating system.
 
 ## When to Use
 
-- “轻量流程 / 简化流程 / 最小工作流”
-- “不要太多文档，先把功能做完”
-- “给我一套跨项目通用的简版流程”
-- “继续当前任务，但用精简模式”
+- "轻量流程 / 简化流程 / 最小工作流"
+- "不要太多文档，先把功能做完"
+- "给我一套跨项目通用的简版流程"
+- "继续当前任务，但用精简模式"
 
 ## Repo Files
 
@@ -30,19 +30,19 @@ Optional:
 
 ## Persistent Project Instructions
 
-On the first meaningful invocation in a repository, create `.github/copilot-instructions.md` if it does not already exist so the lite workflow becomes the repo default for later Copilot sessions.
+On the first meaningful invocation in a repository, create `{{CONFIG_FILE}}` if it does not already exist so the lite workflow becomes the repo default for later {{PLATFORM_NAME}} sessions.
 
-Keep `.github/copilot-instructions.md` minimal. It should contain only durable workflow defaults and should not force heavy reads, broad scans, or generic style rules on every task.
+Keep `{{CONFIG_FILE}}` minimal. It should contain only durable workflow defaults and should not force heavy reads, broad scans, or generic style rules on every task.
 
-If `.github/copilot-instructions.md` does not exist, create it with exactly this compact workflow section:
+If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflow section:
 
 ```md
-# Copilot Instructions
+{{CONFIG_HEADER}}
 
 ## Workflow Defaults
 
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
-- In later sessions, read `.github/copilot-instructions.md`, `STATUS.md`, and the current task card first.
+- In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
 - Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.
 - Prefer the smallest closed loop.
 - Stop at required gates before sync.
@@ -62,7 +62,7 @@ Use this skill in two phases:
 Use the skill to initialize the repo, create the minimum workflow files, and complete `TASK-000` until the repo reaches `Brainstorm Review`.
 
 2. Delivery sessions.
-In later sessions, prefer reading `.github/copilot-instructions.md`, `STATUS.md`, and the current task card before doing any work. Do not reload the skill unless workflow context is missing, the task needs re-scoping, or the repo must be re-initialized.
+In later sessions, prefer reading `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card before doing any work. Do not reload the skill unless workflow context is missing, the task needs re-scoping, or the repo must be re-initialized.
 
 3. If the project is new or the scope is unclear, create `specs/TASK-000.md` first.
 
@@ -145,7 +145,7 @@ User clarification at a gate is not the same as gate approval.
 - Do not declare done before `Verify` and `Review`.
 - Update `BUILD_PLAN.md` only for milestone-level changes.
 - Do not skip `TASK-000` when the project starts from scratch or the goal is still fuzzy.
-- In new delivery sessions, prefer continuing from `.github/copilot-instructions.md`, `STATUS.md`, and the current task card instead of re-running bootstrap.
+- In new delivery sessions, prefer continuing from `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card instead of re-running bootstrap.
 - User clarification does not by itself authorize the next gate.
 - During `TASK-000`, do not ask for a full replacement brief by default. Ask structured follow-up questions based on the missing fields.
 - During `TASK-000`, if the user answer is incomplete or uncertain, continue the follow-up loop instead of moving on.
@@ -173,15 +173,15 @@ User clarification at a gate is not the same as gate approval.
 
 ## Quick Prompts
 
-- `Use $copilot-native-lite-project-workflow to bootstrap a repo with minimal process.`
-- `Use $copilot-native-lite-project-workflow to continue current task in lite mode.`
-- `Use $copilot-native-lite-project-workflow to report status and next action.`
+- `Use ${{SKILL_LITE}} to bootstrap a repo with minimal process.`
+- `Use ${{SKILL_LITE}} to continue current task in lite mode.`
+- `Use ${{SKILL_LITE}} to report status and next action.`
 - `Use create-task to approve creating the next task card without starting implementation.`
 - `Use start-implementation to approve implementation after the task card is ready.`
 
 ## Status Output
 
-Whenever asked “where are we now”, report exactly:
+Whenever asked "where are we now", report exactly:
 1. Current Phase
 2. Current Task
 3. Current Gate

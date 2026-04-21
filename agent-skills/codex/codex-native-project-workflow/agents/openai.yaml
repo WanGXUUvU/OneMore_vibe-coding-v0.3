@@ -1,4 +1,0 @@
-interface:
-  display_name: "Codex Native Project Workflow"
-  short_description: "Full Codex workflow with docs, lanes, and gates"
-  default_prompt: "Use $codex-native-project-workflow to run the full Codex-native workflow from brainstorm through execution, review, and sync."

@@ -1,13 +1,13 @@
 ---
-name: copilot-native-project-workflow
-description: Full Copilot-native project workflow. Use when the user wants GitHub Copilot to manage or continue work with `SPEC.md`, `DECISIONS.md`, `BUILD_PLAN.md`, `STATUS.md`, and `specs/TASK-*.md`; when a project starts from a vague idea and needs structured brainstorming; or when the task should follow `Fast`, `Standard`, or `Strict` lanes with explicit human gates.
+name: {{SKILL_FULL}}
+description: Full {{PLATFORM_NAME}}-native project workflow. Use when the user wants {{PLATFORM_NAME}} to manage or continue work with `SPEC.md`, `DECISIONS.md`, `BUILD_PLAN.md`, `STATUS.md`, and `specs/TASK-*.md`; when a project starts from a vague idea and needs structured brainstorming; or when the task should follow `Fast`, `Standard`, or `Strict` lanes with explicit human gates.
 ---
 
-# Copilot Native Project Workflow
+# {{PLATFORM_NAME}} Native Project Workflow
 
 ## Overview
 
-Use this skill when GitHub Copilot should run a full repo operating system. It turns a vague request into explicit project docs, task cards, lane selection, and gated execution.
+Use this skill when {{PLATFORM_NAME}} should run a full repo operating system. It turns a vague request into explicit project docs, task cards, lane selection, and gated execution.
 
 ## When to Use
 
@@ -30,18 +30,19 @@ Create or maintain these files at repo root unless the repo already has an equiv
 
 ## Persistent Project Instructions
 
-On the first meaningful invocation in a repository, create `.github/copilot-instructions.md` if it does not already exist so the workflow persists for later Copilot sessions.
+On the first meaningful invocation in a repository, create `{{CONFIG_FILE}}` if it does not already exist so the workflow persists for later {{PLATFORM_NAME}} sessions.
 
-Keep `.github/copilot-instructions.md` minimal. It is a persistent memory file, not a second copy of the skill. Do not add generic coding advice, style slogans, or instructions that trigger expensive work on every task.
+Keep `{{CONFIG_FILE}}` minimal. It is a persistent memory file, not a second copy of the skill. Do not add generic coding advice, style slogans, or instructions that trigger expensive work on every task.
 
-If `.github/copilot-instructions.md` does not exist, create it with exactly this compact workflow section:
+If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflow section:
 
 ```md
-# Copilot Instructions
+{{CONFIG_HEADER}}
 
 ## Workflow Defaults
 
-- Use `specs/TASK-000.md` when the task is not yet executable.
+- Read `STATUS.md` and the current task card first; when bootstrapping or when scope is unclear, also read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md`.
+- Use `specs/TASK-000.md` when the task is not yet executable or when the project still needs its first durable docs.
 - Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
 - Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
 - End implementation with `Verify` and `Review`.
@@ -49,8 +50,12 @@ If `.github/copilot-instructions.md` does not exist, create it with exactly this
 - `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
-If the file already exists, update or append only the `## Workflow Defaults` section without replacing unrelated repository instructions.
+If `{{CONFIG_FILE}}` already exists, update or append only the `## Workflow Defaults` section without replacing unrelated repository instructions.
 Never overwrite the entire instruction file unless the user explicitly asks for replacement.
+
+When the full workflow bootstraps a new repo, seed `DECISIONS.md` and `BUILD_PLAN.md` before creating `TASK-001`.
+Use [references/decisions-template.md](references/decisions-template.md) for the initial `DECISIONS.md`.
+Use [references/build-plan-template.md](references/build-plan-template.md) for the initial `BUILD_PLAN.md`.
 
 ## Execution Flow
 
@@ -78,8 +83,8 @@ Drive `TASK-000` by targeted follow-up questions. Do not ask the user to replace
 5. Turn brainstorming into repo docs.
 Update:
 - `SPEC.md` with the six-part structure
-- `DECISIONS.md` with the first important tradeoffs
-- `BUILD_PLAN.md` with at least `M1`
+- `DECISIONS.md` with the first important tradeoffs, using the template above
+- `BUILD_PLAN.md` with at least `M1`, using the template above
 - `STATUS.md` with the current phase, gate, lane, and notes
 
 6. Stop at `Brainstorm Review`.
@@ -152,15 +157,15 @@ User clarification at a gate is not the same as gate approval.
 
 ## Quick Prompts
 
-- `Use $copilot-native-project-workflow to bootstrap this repo from a vague product idea.`
-- `Use $copilot-native-project-workflow to continue the current task and choose the right lane.`
-- `Use $copilot-native-project-workflow to review the repo state, update STATUS, and prepare the next task.`
+- `Use ${{SKILL_FULL}} to bootstrap this repo from a vague product idea.`
+- `Use ${{SKILL_FULL}} to continue the current task and choose the right lane.`
+- `Use ${{SKILL_FULL}} to review the repo state, update STATUS, and prepare the next task.`
 - `Use create-task to approve creating the next task card without starting implementation.`
 - `Use start-implementation to approve implementation after the task card and plan are ready.`
 
 ## Status Output
 
-Whenever asked “where are we now”, report exactly:
+Whenever asked "where are we now", report exactly:
 1. Current Phase
 2. Current Task
 3. Current Gate

@@ -1,6 +1,6 @@
 <p align="right"><a href="./README.md">EN</a> | <strong>简体中文</strong></p>
 
-# Agent Workflow Skills
+# Agent Workflow Skill Generator
 
 <p align="center">
   <img src="./docs/assets/workflow-skills-overview.svg" alt="Agent Workflow Skills overview" width="100%" />
@@ -8,27 +8,25 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/hosts-4-1f6feb?style=flat-square" alt="4 hosts" />
-  <img src="https://img.shields.io/badge/skills-8-0f766e?style=flat-square" alt="8 skills" />
   <img src="https://img.shields.io/badge/variants-full%20%2B%20lite-c084fc?style=flat-square" alt="full and lite variants" />
-  <img src="https://img.shields.io/badge/languages-English%20%7C%20中文-eab308?style=flat-square" alt="English and Chinese" />
+  <img src="https://img.shields.io/badge/source-core--template-0f766e?style=flat-square" alt="template source" />
+  <img src="https://img.shields.io/badge/output-local%20only-eab308?style=flat-square" alt="local output only" />
 </p>
 
-一套面向现代 AI coding agent 的项目工作流 skills 集合。
+这个仓库现在只保留工作流 skill 的生成器和模板源码。
 
-这个仓库把同一套 workflow family 分别适配到了多个宿主上，让你在切换工具时，仍然可以保持一致的项目推进方式。
+它不再把已生成的 skill 快照作为主要维护对象。当前唯一真源是：
 
-## Quick Start
+- `core-template/`
+- `generate.sh`
 
-1. 先选择你使用的宿主：Codex、Claude Code、GitHub Copilot 或 CodeBuddy。
-2. 从 `agent-skills/<host>/` 复制对应的 skill 目录到本机 skills 目录。
-3. 在 agent 提示词中触发 `full` 或 `lite` 版本的 workflow skill。
+生成产物会写到本地 `_internal/agent-skills/`，然后再按需要安装到对应宿主目录。
 
-常见安装目录：
+## 仓库包含内容
 
-- Codex：`~/.codex/skills/`
-- Claude Code：`~/.claude/skills/`
-- GitHub Copilot：`~/.copilot/skills/` 或仓库内 `.github/skills/`
-- CodeBuddy：`~/.codebuddy/skills/`
+- `core-template/`：full / lite 工作流模板，以及共享 references
+- `generate.sh`：4 个宿主统一使用的交互式生成器和安装器
+- `docs/assets/`：README 配图资源
 
 ## 支持宿主
 
@@ -37,141 +35,54 @@
 - GitHub Copilot
 - CodeBuddy
 
-每个宿主都提供两个版本：
+每个宿主都有两个版本：
 
-- `full`：强调文档骨架、车道选择、验证、评审和人工 gate 的完整工作流
-- `lite`：保留同样心智模型，但减少默认流程负担的轻量工作流
+- `full`：带仓库文档、任务卡、车道、验证、评审和人工关卡的完整流程
+- `lite`：保留同一套交付心智模型，但默认流程更轻
 
-## 为什么做这个仓库
+## 快速开始
 
-大多数 agent 都会写代码，但不是每个 agent 都会按稳定的节奏把项目推进下去。
+1. 运行 `./generate.sh`
+2. 选择语言、宿主、生成模式，以及是否安装
+3. 如果选择“仅生成”，产物会写到 `_internal/agent-skills/`
+4. 如果选择“安装”，脚本会把生成后的 skill 复制到对应宿主目录
 
-这套 skills 的目标，是给 agent 一个可重复的项目执行方式：
+常见安装目录：
 
-1. 先读仓库现状
-2. 把模糊任务收敛成可执行任务
-3. 选择合适的交付车道
-4. 在收口前完成验证与评审
-5. 在关键节点停下来等待人工决策
+- Codex：`~/.codex/skills/`
+- Claude Code：`~/.claude/skills/`
+- GitHub Copilot：`~/.copilot/skills/` 或仓库内 `.github/skills/`
+- CodeBuddy：`~/.codebuddy/skills/`
 
-它不是为了增加流程感，而是为了让执行更干净、更稳定。
+## 目录结构
+
+```text
+core-template/
+  references/
+  workflow-full.md.template
+  workflow-full.zh.md.template
+  workflow-lite.md.template
+  workflow-lite.zh.md.template
+generate.sh
+docs/assets/
+_internal/
+  agent-skills/        # 本地生成产物
+  claude-local/        # 本地杂项文件
+```
 
 ## Workflow Model
 
-这 8 个 skills 共享同一套核心结构：
+所有生成出的 skill 共享同一条核心主链：
 
-1. 先读取当前仓库状态
+1. 先读仓库状态
 2. 当任务还不可执行时，先走 `TASK-000`
 3. 记录范围、约束和完成标准
-4. 在支持的宿主里选择 `Fast`、`Standard`、`Strict`
-5. 每次实施结束都必须补 `Verify` 和 `Review`
-6. 在 `Brainstorm Review`、`Plan Review`、`Sync Review` 等节点停下来
+4. 选择满足需要的最小车道
+5. 实现结束必须补 `Verify` 和 `Review`
+6. 在 `Brainstorm Review`、`Plan Review`、`Sync Review` 等人工关卡停下来
 
-实际效果上，它更像是一个给 agent 用的小型项目操作系统。
+## 说明
 
-## 实际流程
-
-当前这套 workflow family 围绕一条很小但很硬的审批闭环展开：
-
-1. 先初始化仓库，建立最小工作流文件。
-2. 用 `TASK-000` 把模糊想法收敛成可执行 brief。
-3. 停在 `Brainstorm Review`，直到 brief 足够清楚。
-4. 用 `create-task` 创建下一张实现任务卡，例如 `TASK-001`。
-5. 在写代码前停在 `Implementation Approval`。
-6. 用 `start-implementation` 进入实现闭环。
-7. 完成当前任务时必须补 `Verify` 和 `Review`。
-8. 停在 `Sync Review`，然后只显式选择下一步中的一个：
-   接受当前任务、继续当前任务、或创建下一张任务卡。
-
-在 lite 模式下，`TASK-000` 应该通过缺口驱动的追问来推进，而不是默认要求用户重写整版 brief。full 模式沿用同样的审批主链，但会配合更完整的仓库文档和更强的计划检查点。
-
-## Full vs Lite
-
-### Full
-
-适合这些场景：
-
-- 从 0 到 1 启动项目
-- 希望明确维护 `SPEC.md`、`DECISIONS.md`、`BUILD_PLAN.md`、`STATUS.md`
-- 需要更强的可追踪性
-- 多步骤、高风险任务希望显式经过 `Plan Review`
-
-### Lite
-
-适合这些场景：
-
-- 想保留任务卡与关卡，但不想默认流程太重
-- 不需要一开始就维护太多根文档
-- 更强调快速闭环
-- 希望把它作为小中型项目的默认模式
-
-## 安装
-
-### Codex
-
-```bash
-cp -R agent-skills/codex/codex-native-project-workflow ~/.codex/skills/
-cp -R agent-skills/codex/codex-native-lite-project-workflow ~/.codex/skills/
-```
-
-### Claude Code
-
-```bash
-cp -R agent-skills/claude/claude-native-project-workflow ~/.claude/skills/
-cp -R agent-skills/claude/claude-native-lite-project-workflow ~/.claude/skills/
-```
-
-### GitHub Copilot
-
-```bash
-cp -R agent-skills/copilot/copilot-native-project-workflow ~/.copilot/skills/
-cp -R agent-skills/copilot/copilot-native-lite-project-workflow ~/.copilot/skills/
-```
-
-Copilot 也可以按仓库级放在：
-
-```text
-.github/skills/
-```
-
-### CodeBuddy
-
-```bash
-cp -R agent-skills/codebuddy/codebuddy-native-project-workflow ~/.codebuddy/skills/
-cp -R agent-skills/codebuddy/codebuddy-native-lite-project-workflow ~/.codebuddy/skills/
-```
-
-## 使用示例
-
-### Codex
-
-```text
-Use $codex-native-project-workflow to bootstrap this repo.
-Use $codex-native-lite-project-workflow to continue in lite mode.
-```
-
-### Claude Code
-
-```text
-Use $claude-native-project-workflow to continue the current task.
-Use $claude-native-lite-project-workflow to run the repo in lite mode.
-```
-
-### GitHub Copilot
-
-```text
-Use $copilot-native-project-workflow to set up the full workflow for this repo.
-Use $copilot-native-lite-project-workflow to keep the workflow lightweight.
-```
-
-### CodeBuddy
-
-```text
-使用 $codebuddy-native-project-workflow 启动完整项目工作流
-使用 $codebuddy-native-lite-project-workflow 以精简模式继续当前任务
-```
-
-## Notes
-- 这个仓库现在只保留发布用的 skill 快照和最小安装说明。
-- 仓库中的这些 skill 是快照版本。如果你后续更新了本机 live 版本，发布前记得同步回来。
-- 不同宿主的加载方式会略有差异，但 workflow 语义已经尽量对齐。
+- 不要把 `_internal/agent-skills/` 当成源码维护。
+- 需要修改时，请改 `core-template/`，然后重新生成。
+- 已生成的各宿主产物有意不再作为仓库主展示面的一部分。

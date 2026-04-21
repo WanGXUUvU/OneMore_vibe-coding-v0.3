@@ -1,20 +1,15 @@
 ---
-name: "codebuddy-native-lite-project-workflow"
-description: "触发场景：CodeBuddy 原生轻量项目工作流、简化流程、最小工作流、快速交付循环；触发词：轻量流程、简化流程、最小工作流、快速交付、精简模式、lite模式、TASK-000、头脑风暴、项目启动、继续任务；使用 CodeBuddy 原生轻量工作流管理仓库时必须触发"
-description_zh: "CodeBuddy 原生轻量项目工作流，带硬关卡的精简交付流程"
-description_en: "Lite CodeBuddy-native project workflow with hard gates for minimal delivery"
-category: "项目工作流"
-version: "1.0.0"
-author: "codebuddy"
-enabled: true
-allowed-tools: Read,Write,Bash,Grep
+name: "{{SKILL_LITE}}"
+description: "触发场景：{{PLATFORM_NAME}} 原生轻量项目工作流、简化流程、最小工作流、快速交付循环；触发词：轻量流程、简化流程、最小工作流、快速交付、精简模式、lite模式、TASK-000、头脑风暴、项目启动、继续任务；使用 {{PLATFORM_NAME}} 原生轻量工作流管理仓库时必须触发"
+description_zh: "{{PLATFORM_NAME}} 原生轻量项目工作流，带硬关卡的精简交付流程"
+description_en: "Lite {{PLATFORM_NAME}}-native project workflow with hard gates for minimal delivery"
 ---
 
-# CodeBuddy Native Lite Project Workflow（CodeBuddy 原生轻量项目工作流）
+# {{PLATFORM_NAME}} Native Lite Project Workflow（{{PLATFORM_NAME}} 原生轻量项目工作流）
 
 ## Overview（技能用途）
 
-本技能为 CodeBuddy 的轻量项目工作流，用最少的文件和步骤完成交付，在保留任务卡和硬关卡的前提下，避免默认进入完整的仓库操作系统模式。
+本技能为 {{PLATFORM_NAME}} 的轻量项目工作流，用最少的文件和步骤完成交付，在保留任务卡和硬关卡的前提下，避免默认进入完整的仓库操作系统模式。
 
 ## When to Use（触发规则）
 
@@ -32,21 +27,25 @@ allowed-tools: Read,Write,Bash,Grep
 - `specs/TASK-001.md` 及后续任务卡
 - `specs/PATCH-TASK.md`
 
+可选：
+- `SPEC.md` 仅当范围或边界不清时
+- `BUILD_PLAN.md` 仅用于里程碑级变更
+
 ## Persistent Project Instructions（持久化项目约束）
 
-在仓库内第一次有意义地调用本技能时，如果 `CODEBUDDY.md` 不存在，就应主动创建它，让这套 lite workflow 在后续会话中作为默认方式持续生效。
+在仓库内第一次有意义地调用本技能时，如果 `{{CONFIG_FILE}}` 不存在，就应主动创建它，让这套 lite workflow 在后续会话中作为默认方式持续生效。
 
-保持 `CODEBUDDY.md` 极简。它只应包含可长期保留的 workflow 默认值，不应强制每个任务都做重读文档、全仓扫描或套用泛化风格规则。
+保持 `{{CONFIG_FILE}}` 极简。它只应包含可长期保留的 workflow 默认值，不应强制每个任务都做重读文档、全仓扫描或套用泛化风格规则。
 
-如果 `CODEBUDDY.md` 不存在，就按下面这段精简 workflow 区块创建：
+如果 `{{CONFIG_FILE}}` 不存在，就按下面这段精简 workflow 区块创建：
 
 ```md
-# CODEBUDDY.md
+{{CONFIG_HEADER}}
 
 ## Workflow Defaults
 
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
-- In later sessions, read `CODEBUDDY.md`, `STATUS.md`, and the current task card first.
+- In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
 - Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.
 - Prefer the smallest closed loop.
 - Stop at required gates before sync.
@@ -55,8 +54,8 @@ allowed-tools: Read,Write,Bash,Grep
 - In later sessions, `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
-如果 `CODEBUDDY.md` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关内容。
-除非用户明确要求，否则不要整体替换现有 `CODEBUDDY.md`。
+如果 `{{CONFIG_FILE}}` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关内容。
+除非用户明确要求，否则不要整体替换现有 `{{CONFIG_FILE}}`。
 
 ## Execution Flow（执行流程）
 
@@ -66,7 +65,7 @@ allowed-tools: Read,Write,Bash,Grep
 用本技能初始化仓库、创建最小工作流文件，并完成 `TASK-000`，直到仓库进入 `Brainstorm Review`。
 
 2. Delivery sessions。
-后续会话优先读取 `CODEBUDDY.md`、`STATUS.md` 和当前任务卡，再决定行动。除非 workflow 上下文缺失、任务需要重新界定范围，或仓库需要重新初始化，否则不要重新加载技能。
+后续会话优先读取 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡，再决定行动。除非 workflow 上下文缺失、任务需要重新界定范围，或仓库需要重新初始化，否则不要重新加载技能。
 
 3. 如果项目是新的，或范围不清楚，先创建 `specs/TASK-000.md`。
 
@@ -94,7 +93,7 @@ allowed-tools: Read,Write,Bash,Grep
 
 ## Capability Gate（能力门）
 
-- 如果 CodeBuddy 的 Task 工具（子代理）可用，只在它们能降低时间成本或风险时使用。
+- 如果子代理可用，只在它们能降低时间成本或风险时使用。
 - 如果子代理不可用，声明 `Single-agent serial fallback`。
 - 保持 planner、generator、evaluator、fixer 的职责边界。
 
@@ -150,7 +149,7 @@ allowed-tools: Read,Write,Bash,Grep
 - 在 `Verify` 和 `Review` 之前不要宣告完成。
 - 只有里程碑级变化才更新 `BUILD_PLAN.md`。
 - 当项目从零开始或目标仍然模糊时，不要跳过 `TASK-000`。
-- 在新的 delivery session 中，优先从 `CODEBUDDY.md`、`STATUS.md` 和当前任务卡继续，而不是重新跑 bootstrap。
+- 在新的 delivery session 中，优先从 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡继续，而不是重新跑 bootstrap。
 - 用户补充信息本身，不得自动视为通过下一关。
 - 在 `TASK-000` 期间，不要默认要求用户重写完整 brief，应只追问缺失字段。
 - 在 `TASK-000` 期间，如果用户回答仍不完整或不确定，应继续追问，而不是直接前进。
@@ -178,9 +177,9 @@ allowed-tools: Read,Write,Bash,Grep
 
 ## Quick Prompts（快捷指令）
 
-- 使用 `$codebuddy-native-lite-project-workflow` 以精简模式引导仓库
-- 使用 `$codebuddy-native-lite-project-workflow` 继续当前精简模式任务
-- 使用 `$codebuddy-native-lite-project-workflow` 报告项目状态和下一步行动
+- 使用 `${{SKILL_LITE}}` 以精简模式引导仓库
+- 使用 `${{SKILL_LITE}}` 继续当前精简模式任务
+- 使用 `${{SKILL_LITE}}` 报告项目状态和下一步行动
 - 使用 `create-task` 允许创建下一张任务卡但不立即开始实现
 - 使用 `start-implementation` 在任务卡准备好后批准开始实现
 

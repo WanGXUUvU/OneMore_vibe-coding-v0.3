@@ -1,4 +1,0 @@
-interface:
-  display_name: "Codex Native Lite Project Workflow"
-  short_description: "Lite Codex workflow with minimal docs, lanes, and gates"
-  default_prompt: "Use $codex-native-lite-project-workflow to run the lite Codex-native workflow with minimal docs and the same core gates."

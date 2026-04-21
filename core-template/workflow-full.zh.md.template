@@ -1,20 +1,15 @@
 ---
-name: "codebuddy-native-project-workflow"
-description: "触发场景：CodeBuddy 原生完整项目工作流、标准化流程、完整交付闭环、Brainstorm/Plan/Sync 人工关卡；触发词：启动流程、继续流程、标准化流程、完整工作流、TASK-000、TASK-001、Brainstorm Review、Plan Review、Sync Review、Verify、Review；使用 CodeBuddy 原生完整工作流管理仓库时必须触发"
-description_zh: "CodeBuddy 原生完整项目工作流，带文档骨架、车道选择和硬关卡的完整交付流程"
-description_en: "Full CodeBuddy-native project workflow with docs, lanes, and hard gates"
-category: "项目工作流"
-version: "1.0.0"
-author: "codebuddy"
-enabled: true
-allowed-tools: Read,Write,Bash,Grep
+name: "{{SKILL_FULL}}"
+description: "触发场景：{{PLATFORM_NAME}} 原生完整项目工作流、标准化流程、完整交付闭环、Brainstorm/Plan/Sync 人工关卡；触发词：启动流程、继续流程、标准化流程、完整工作流、TASK-000、TASK-001、Brainstorm Review、Plan Review、Sync Review、Verify、Review；使用 {{PLATFORM_NAME}} 原生完整工作流管理仓库时必须触发"
+description_zh: "{{PLATFORM_NAME}} 原生完整项目工作流，带文档骨架、车道选择和硬关卡的完整交付流程"
+description_en: "Full {{PLATFORM_NAME}}-native project workflow with docs, lanes, and hard gates"
 ---
 
-# CodeBuddy Native Project Workflow（CodeBuddy 原生完整项目工作流）
+# {{PLATFORM_NAME}} Native Project Workflow（{{PLATFORM_NAME}} 原生完整项目工作流）
 
 ## Overview（技能用途）
 
-本技能为 CodeBuddy 的完整项目工作流，用明确的文档骨架、任务卡、车道和人工关卡，把模糊需求推进为可执行、可验证、可同步的最小闭环。
+本技能为 {{PLATFORM_NAME}} 的完整项目工作流，用明确的文档骨架、任务卡、车道和人工关卡，把模糊需求推进为可执行、可验证、可同步的最小闭环。
 
 ## When to Use（触发规则）
 
@@ -39,18 +34,19 @@ allowed-tools: Read,Write,Bash,Grep
 
 ## Persistent Project Instructions（持久化项目约束）
 
-在仓库内第一次有意义地调用本技能时，如果 `CODEBUDDY.md` 不存在，就应主动创建它，让这套 workflow 在后续会话中持续生效。
+在仓库内第一次有意义地调用本技能时，如果 `{{CONFIG_FILE}}` 不存在，就应主动创建它，让这套 workflow 在后续会话中持续生效。
 
-保持 `CODEBUDDY.md` 极简。它是持久化记忆文件，不是 skill 的第二份副本。不要写通用编码建议、风格口号，或任何会在每个任务里触发高成本操作的指令。
+保持 `{{CONFIG_FILE}}` 极简。它是持久化记忆文件，不是 skill 的第二份副本。不要写通用编码建议、风格口号，或任何会在每个任务里触发高成本操作的指令。
 
-如果 `CODEBUDDY.md` 不存在，就按下面这段精简 workflow 区块创建：
+如果 `{{CONFIG_FILE}}` 不存在，就按下面这段精简 workflow 区块创建：
 
 ```md
-# CODEBUDDY.md
+{{CONFIG_HEADER}}
 
 ## Workflow Defaults
 
-- Use `specs/TASK-000.md` when the task is not yet executable.
+- Read `STATUS.md` and the current task card first; when bootstrapping or when scope is unclear, also read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md`.
+- Use `specs/TASK-000.md` when the task is not yet executable or when the project still needs its first durable docs.
 - Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
 - Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
 - End implementation with `Verify` and `Review`.
@@ -58,8 +54,12 @@ allowed-tools: Read,Write,Bash,Grep
 - `create-task` means create the next task card only; `start-implementation` means implementation may begin.
 ```
 
-如果 `CODEBUDDY.md` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关项目规则。
-除非用户明确要求，不要整体替换现有 `CODEBUDDY.md`。
+如果 `{{CONFIG_FILE}}` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关项目规则。
+除非用户明确要求，不要整体替换现有 `{{CONFIG_FILE}}`。
+
+当 full workflow 在新仓库里首次落盘时，先初始化 `DECISIONS.md` 和 `BUILD_PLAN.md`，再创建 `TASK-001`。
+初始 `DECISIONS.md` 使用 [references/decisions-template.md](references/decisions-template.md)。
+初始 `BUILD_PLAN.md` 使用 [references/build-plan-template.md](references/build-plan-template.md)。
 
 ## Execution Flow（执行流程）
 
@@ -84,8 +84,8 @@ allowed-tools: Read,Write,Bash,Grep
 
 5. 将头脑风暴结果同步到仓库文档：
 - `SPEC.md` 写入六段结构
-- `DECISIONS.md` 记录首轮关键取舍
-- `BUILD_PLAN.md` 至少补到 `M1`
+- `DECISIONS.md` 记录首轮关键取舍，使用上面的模板
+- `BUILD_PLAN.md` 至少补到 `M1`，使用上面的模板
 - `STATUS.md` 更新当前阶段、关卡、车道与说明
 
 6. 停在 `Brainstorm Review`，等待用户明确确认。
@@ -158,15 +158,15 @@ allowed-tools: Read,Write,Bash,Grep
 
 ## Quick Prompts（快捷触发）
 
-- 使用 `$codebuddy-native-project-workflow` 从模糊想法启动一个仓库
-- 使用 `$codebuddy-native-project-workflow` 继续当前任务并选择合适车道
-- 使用 `$codebuddy-native-project-workflow` 检查仓库状态、更新 STATUS 并准备下一张任务卡
+- 使用 `${{SKILL_FULL}}` 从模糊想法启动一个仓库
+- 使用 `${{SKILL_FULL}}` 继续当前任务并选择合适车道
+- 使用 `${{SKILL_FULL}}` 检查仓库状态、更新 STATUS 并准备下一张任务卡
 - 使用 `create-task` 允许创建下一张任务卡但不立即开始实现
 - 使用 `start-implementation` 在任务卡和计划就绪后批准开始实现
 
 ## Status Output（状态输出格式）
 
-当用户问“现在到哪一步了”时，按以下格式输出：
+当用户问"现在到哪一步了"时，按以下格式输出：
 1. Current Phase
 2. Current Task
 3. Current Gate

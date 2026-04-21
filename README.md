@@ -1,6 +1,6 @@
 <p align="right"><strong>EN</strong> | <a href="./README.zh-CN.md">简体中文</a></p>
 
-# Agent Workflow Skills
+# Agent Workflow Skill Generator
 
 <p align="center">
   <img src="./docs/assets/workflow-skills-overview.svg" alt="Agent Workflow Skills overview" width="100%" />
@@ -8,20 +8,44 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/hosts-4-1f6feb?style=flat-square" alt="4 hosts" />
-  <img src="https://img.shields.io/badge/skills-8-0f766e?style=flat-square" alt="8 skills" />
   <img src="https://img.shields.io/badge/variants-full%20%2B%20lite-c084fc?style=flat-square" alt="full and lite variants" />
-  <img src="https://img.shields.io/badge/languages-English%20%7C%20中文-eab308?style=flat-square" alt="English and Chinese" />
+  <img src="https://img.shields.io/badge/source-core--template-0f766e?style=flat-square" alt="template source" />
+  <img src="https://img.shields.io/badge/output-local%20only-eab308?style=flat-square" alt="local output only" />
 </p>
 
-A curated set of project-workflow skills for modern AI coding agents.
+This repository now keeps only the generator and template sources for the workflow skills.
 
-This repository packages the same workflow family across multiple hosts so you can keep one project-operating model while switching between tools.
+It does not use committed published skill snapshots as the primary source anymore. The source of truth is:
+
+- `core-template/`
+- `generate.sh`
+
+Generated outputs are written locally to `_internal/agent-skills/` and can then be installed into the matching host directory.
+
+## What This Repo Contains
+
+- `core-template/`: full and lite workflow templates plus shared references
+- `generate.sh`: interactive generator and installer for all 4 hosts
+- `docs/assets/`: README assets only
+
+## Supported Hosts
+
+- Codex
+- Claude Code
+- GitHub Copilot
+- CodeBuddy
+
+Each host has two variants:
+
+- `full`: structured workflow with repo docs, task cards, lanes, verification, review, and human gates
+- `lite`: lighter workflow with the same core delivery model and less process overhead
 
 ## Quick Start
 
-1. Choose your host: Codex, Claude Code, GitHub Copilot, or CodeBuddy.
-2. Copy the matching skill folders from `agent-skills/<host>/` into your local skills directory.
-3. Trigger either the `full` or `lite` workflow skill in your agent prompt.
+1. Run `./generate.sh`
+2. Choose language, host, generation mode, and optional install target
+3. If you choose generate-only mode, outputs are written to `_internal/agent-skills/`
+4. If you choose install mode, the script copies the generated skills into the correct host directory
 
 Common install targets:
 
@@ -30,148 +54,35 @@ Common install targets:
 - GitHub Copilot: `~/.copilot/skills/` or repo-local `.github/skills/`
 - CodeBuddy: `~/.codebuddy/skills/`
 
-## Hosts
+## Repo Layout
 
-- Codex
-- Claude Code
-- GitHub Copilot
-- CodeBuddy
-
-Each host includes two variants:
-
-- `full`: a structured workflow with planning documents, task cards, lane selection, verification, review, and human gates
-- `lite`: a lighter version that keeps the same mental model with less process overhead
-
-## Why This Repo Exists
-
-Most agents are good at generating code. Fewer are guided by a stable delivery rhythm.
-
-These skills are designed to give agents a repeatable way to move a project forward:
-
-1. read the repo state first
-2. turn vague work into executable tasks
-3. choose the right delivery lane
-4. verify and review before closure
-5. stop at explicit human decision points
-
-The goal is not more ceremony. The goal is cleaner execution.
+```text
+core-template/
+  references/
+  workflow-full.md.template
+  workflow-full.zh.md.template
+  workflow-lite.md.template
+  workflow-lite.zh.md.template
+generate.sh
+docs/assets/
+_internal/
+  agent-skills/        # generated locally
+  claude-local/        # local-only misc files
+```
 
 ## Workflow Model
 
-All eight skills share the same core shape:
+All generated skills share the same core shape:
 
-1. Read the current repo before acting.
-2. Use `TASK-000` when the task is not yet executable.
-3. Record scope, constraints, and done conditions.
-4. Choose a lane such as `Fast`, `Standard`, or `Strict` where supported.
-5. Finish every implementation step with `Verify` and `Review`.
-6. Pause at gates such as `Brainstorm Review`, `Plan Review`, and `Sync Review`.
-
-In practice, this gives you a small project operating system for agent-driven work.
-
-## Delivery Flow
-
-The current workflow family is designed around a small approval-driven loop:
-
-1. Bootstrap the repo and create the minimum workflow files.
-2. Use `TASK-000` to turn a vague idea into an executable brief.
-3. Stay at `Brainstorm Review` until the brief is clear enough.
-4. Use `create-task` to create the next implementation card such as `TASK-001`.
-5. Stop at `Implementation Approval` before writing code.
-6. Use `start-implementation` to begin the implementation loop.
-7. Finish the task with `Verify` and `Review`.
-8. Stop at `Sync Review`, then explicitly choose one next move:
-   accept the task, continue the task, or create the next task card.
-
-In lite mode, `TASK-000` should be driven by targeted follow-up questions instead of asking the user to rewrite a full brief. In full mode, the same approval flow applies, but with heavier repo docs and stronger planning checkpoints.
-
-## Full vs Lite
-
-### Full
-
-Choose the full workflow when you want:
-
-- stronger structure from idea to delivery
-- explicit repo docs such as `SPEC.md`, `DECISIONS.md`, `BUILD_PLAN.md`, and `STATUS.md`
-- clearer planning checkpoints
-- better traceability for multi-step or higher-risk work
-
-### Lite
-
-Choose the lite workflow when you want:
-
-- the same task-driven discipline with less overhead
-- fewer required docs
-- faster iteration loops
-- a simpler default for small and medium-sized work
-
-## Install
-
-### Codex
-
-```bash
-cp -R agent-skills/codex/codex-native-project-workflow ~/.codex/skills/
-cp -R agent-skills/codex/codex-native-lite-project-workflow ~/.codex/skills/
-```
-
-### Claude Code
-
-```bash
-cp -R agent-skills/claude/claude-native-project-workflow ~/.claude/skills/
-cp -R agent-skills/claude/claude-native-lite-project-workflow ~/.claude/skills/
-```
-
-### GitHub Copilot
-
-```bash
-cp -R agent-skills/copilot/copilot-native-project-workflow ~/.copilot/skills/
-cp -R agent-skills/copilot/copilot-native-lite-project-workflow ~/.copilot/skills/
-```
-
-You can also vendor the Copilot skills inside a repo under:
-
-```text
-.github/skills/
-```
-
-### CodeBuddy
-
-```bash
-cp -R agent-skills/codebuddy/codebuddy-native-project-workflow ~/.codebuddy/skills/
-cp -R agent-skills/codebuddy/codebuddy-native-lite-project-workflow ~/.codebuddy/skills/
-```
-
-## Example Invocations
-
-### Codex
-
-```text
-Use $codex-native-project-workflow to bootstrap this repo.
-Use $codex-native-lite-project-workflow to continue in lite mode.
-```
-
-### Claude Code
-
-```text
-Use $claude-native-project-workflow to continue the current task.
-Use $claude-native-lite-project-workflow to run the repo in lite mode.
-```
-
-### GitHub Copilot
-
-```text
-Use $copilot-native-project-workflow to set up the full workflow for this repo.
-Use $copilot-native-lite-project-workflow to keep the workflow lightweight.
-```
-
-### CodeBuddy
-
-```text
-使用 $codebuddy-native-project-workflow 启动完整项目工作流
-使用 $codebuddy-native-lite-project-workflow 以精简模式继续当前任务
-```
+1. Read the repo state first
+2. Use `TASK-000` when the task is not yet executable
+3. Record scope, constraints, and done conditions
+4. Choose the smallest valid lane
+5. End implementation with `Verify` and `Review`
+6. Stop at explicit human gates such as `Brainstorm Review`, `Plan Review`, and `Sync Review`
 
 ## Notes
-- This repository intentionally keeps only the published skill snapshots and the minimal docs needed to install them.
-- The skill folders in this repo are snapshots of live local skills. Sync updated copies back here before publishing a new revision.
-- Host loading behavior differs slightly, but the workflow semantics are intentionally aligned.
+
+- Do not treat `_internal/agent-skills/` as source code.
+- Change templates in `core-template/`, then regenerate.
+- The generated host outputs are intentionally kept out of the main repo surface.
