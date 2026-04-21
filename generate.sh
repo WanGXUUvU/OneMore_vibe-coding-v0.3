@@ -284,9 +284,8 @@ generate_platform() {
 # 安装到本机 AI 平台目录
 # ─────────────────────────────────────────────
 install_skills() {
-  separator
   if [[ "$INSTALL_SCOPE" == "project" ]]; then
-    echo -e "\n  ${BOLD}安装到项目级${RESET}  ${DIM}$PWD${RESET}\n"
+    echo -e "\n  ${BOLD}安装到项目级${RESET}  ${DIM}$PWD/${RESET}\n"
     local copilot_dir="$PWD/.github/skills"
     local claude_dir="$PWD/.claude/skills"
     local codex_dir="$PWD/.agents/skills"
