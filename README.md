@@ -24,7 +24,13 @@ Run one script, pick your host and language, and get ready-to-install skill file
 ## Quick Start
 
 ```bash
-./generate.sh
+curl -fsSL https://raw.githubusercontent.com/WanGXUUvU/OneMore_vibe-coding/main/install.sh | bash
+```
+
+Or clone and run manually:
+
+```bash
+git clone --depth 1 https://github.com/WanGXUUvU/OneMore_vibe-coding.git && cd OneMore_vibe-coding && ./generate.sh
 ```
 
 The script walks you through four steps: language, host, generate mode, and install target.

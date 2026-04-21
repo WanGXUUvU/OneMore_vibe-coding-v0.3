@@ -24,7 +24,13 @@
 ## 快速开始
 
 ```bash
-./generate.sh
+curl -fsSL https://raw.githubusercontent.com/WanGXUUvU/OneMore_vibe-coding/main/install.sh | bash
+```
+
+或手动克隆运行：
+
+```bash
+git clone --depth 1 https://github.com/WanGXUUvU/OneMore_vibe-coding.git && cd OneMore_vibe-coding && ./generate.sh
 ```
 
 脚本会引导你完成四个步骤：语言、宿主、生成模式、安装目标。
