@@ -273,7 +273,23 @@ write_file() {
 }
 
 # ─────────────────────────────────────────────
+# 变量替换辅助
+# ─────────────────────────────────────────────
+render() {
+  # render <file> — 将文件内容做变量替换后输出到 stdout
+  sed \
+    -e "s|{{PLATFORM_NAME}}|$_r_name|g" \
+    -e "s|{{CONFIG_FILE}}|$_r_config_file|g" \
+    -e "s|{{CONFIG_HEADER}}|$_r_config_header|g" \
+    -e "s|{{SKILL_FULL}}|$_r_skill_full|g" \
+    -e "s|{{SKILL_LITE}}|$_r_skill_lite|g" \
+    -e "s|{{VERSION}}|$VERSION|g" \
+    "$1"
+}
+
+# ─────────────────────────────────────────────
 # 生成单个平台的 full + lite skill
+# 组装方式：frontmatter/{id}-{mode}[.zh].txt + body/{mode}[.zh].md
 # ─────────────────────────────────────────────
 generate_platform() {
   local id="$1"
@@ -282,47 +298,49 @@ generate_platform() {
   local config_header="$4"
   local skill_full="$5"
   local skill_lite="$6"
-  local template_lang_suffix="${7:-$LANG_SUFFIX}"
+  local force_lang="${7:-}"   # 非空时强制覆盖 LANG_SUFFIX（codebuddy 用）
 
   [[ -n "$FILTER" && "$FILTER" != "$id" ]] && return 0
 
   echo -e "  ${BOLD}${MAGENTA}→${RESET} ${BOLD}$id${RESET}  ${DIM}($name)${RESET}"
 
+  local lang="${force_lang:-$LANG_SUFFIX}"   # ".zh" 或 ""
   local out_full="$OUTPUT_DIR/$id/$skill_full"
   local out_lite="$OUTPUT_DIR/$id/$skill_lite"
 
   $DRY_RUN || mkdir -p "$out_full/references" "$out_lite"
 
-  # 选择模板（有平台专用版优先使用，否则回退到通用版）
-  local full_tpl="$TEMPLATE_DIR/workflow-full${template_lang_suffix}.md.template"
-  local lite_tpl="$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.md.template"
-  [[ -f "$TEMPLATE_DIR/workflow-full${template_lang_suffix}.${id}.md.template" ]] && \
-    full_tpl="$TEMPLATE_DIR/workflow-full${template_lang_suffix}.${id}.md.template"
-  [[ -f "$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.${id}.md.template" ]] && \
-    lite_tpl="$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.${id}.md.template"
+  # 选择 frontmatter 文件（平台专用，优先 zh 版，否则 en 版）
+  local fm_full fm_lite
+  fm_full="$TEMPLATE_DIR/frontmatter/${id}-full${lang}.txt"
+  fm_lite="$TEMPLATE_DIR/frontmatter/${id}-lite${lang}.txt"
+  # 回退：无 zh 专用版时用英文版
+  [[ ! -f "$fm_full" ]] && fm_full="$TEMPLATE_DIR/frontmatter/${id}-full.txt"
+  [[ ! -f "$fm_lite" ]] && fm_lite="$TEMPLATE_DIR/frontmatter/${id}-lite.txt"
 
-  # Full SKILL.md
+  # 选择 body 文件
+  local body_full body_lite
+  body_full="$TEMPLATE_DIR/body/full${lang}.md"
+  body_lite="$TEMPLATE_DIR/body/lite${lang}.md"
+  # 回退：无 zh body 时用英文 body
+  [[ ! -f "$body_full" ]] && body_full="$TEMPLATE_DIR/body/full.md"
+  [[ ! -f "$body_lite" ]] && body_lite="$TEMPLATE_DIR/body/lite.md"
+
+  # 暴露渲染变量给 render()
+  _r_name="$name"
+  _r_config_file="$config_file"
+  _r_config_header="$config_header"
+  _r_skill_full="$skill_full"
+  _r_skill_lite="$skill_lite"
+
+  # Full SKILL.md = frontmatter + body
   local full_content
-  full_content="$(sed \
-    -e "s|{{PLATFORM_NAME}}|$name|g" \
-    -e "s|{{CONFIG_FILE}}|$config_file|g" \
-    -e "s|{{CONFIG_HEADER}}|$config_header|g" \
-    -e "s|{{SKILL_FULL}}|$skill_full|g" \
-    -e "s|{{SKILL_LITE}}|$skill_lite|g" \
-    -e "s|{{VERSION}}|$VERSION|g" \
-    "$full_tpl")"
+  full_content="$(cat <(render "$fm_full") <(render "$body_full"))"
   write_file "$out_full/SKILL.md" "$full_content"
 
-  # Lite SKILL.md
+  # Lite SKILL.md = frontmatter + body
   local lite_content
-  lite_content="$(sed \
-    -e "s|{{PLATFORM_NAME}}|$name|g" \
-    -e "s|{{CONFIG_FILE}}|$config_file|g" \
-    -e "s|{{CONFIG_HEADER}}|$config_header|g" \
-    -e "s|{{SKILL_FULL}}|$skill_full|g" \
-    -e "s|{{SKILL_LITE}}|$skill_lite|g" \
-    -e "s|{{VERSION}}|$VERSION|g" \
-    "$lite_tpl")"
+  lite_content="$(cat <(render "$fm_lite") <(render "$body_lite"))"
   write_file "$out_lite/SKILL.md" "$lite_content"
 
   # references（只有 full 版需要）
