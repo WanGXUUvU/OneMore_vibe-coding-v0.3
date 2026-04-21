@@ -193,7 +193,7 @@ if ! $DRY_RUN && ! $NON_INTERACTIVE; then
   echo ""
   echo -e "    ${BOLD}1)${RESET}  📁  仅生成到 _internal/agent-skills/  ${DIM}(不安装)${RESET}"
   echo -e "    ${BOLD}2)${RESET}  🏠  安装到${BOLD}用户级${RESET}目录  ${DIM}(~/.{platform}/skills/，全局生效)${RESET}"
-  echo -e "    ${BOLD}3)${RESET}  📂  安装到${BOLD}项目级${RESET}目录  ${DIM}(当前目录 .{platform}/skills/)${RESET}"
+  echo -e "    ${BOLD}3)${RESET}  📂  安装到${BOLD}项目级${RESET}目录  ${DIM}(你的工作目录 .{platform}/skills/)${RESET}"
   echo -e "    ${DIM}0)  退出${RESET}"
 
   ask install_choice "请输入编号 [0-3]："
@@ -364,12 +364,14 @@ generate_platform() {
 # 安装到本机 AI 平台目录
 # ─────────────────────────────────────────────
 install_skills() {
+  # project 级使用调用者目录（curl 安装时由 install.sh 导出 CALLER_DIR）
+  local project_base="${CALLER_DIR:-$PWD}"
   if [[ "$INSTALL_SCOPE" == "project" ]]; then
-    echo -e "\n  ${BOLD}安装到项目级${RESET}  ${DIM}$PWD/${RESET}\n"
-    local copilot_dir="$PWD/.github/skills"
-    local claude_dir="$PWD/.claude/skills"
-    local codex_dir="$PWD/.codex/skills"
-    local codebuddy_dir="$PWD/.codebuddy/skills"
+    echo -e "\n  ${BOLD}安裃到项目级${RESET}  ${DIM}$project_base/${RESET}\n"
+    local copilot_dir="$project_base/.github/skills"
+    local claude_dir="$project_base/.claude/skills"
+    local codex_dir="$project_base/.codex/skills"
+    local codebuddy_dir="$project_base/.codebuddy/skills"
   else
     echo -e "\n  ${BOLD}安装到用户级${RESET}  ${DIM}~/${RESET}\n"
     local copilot_dir="$HOME/.copilot/skills"

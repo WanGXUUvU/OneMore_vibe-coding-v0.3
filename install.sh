@@ -6,6 +6,8 @@ set -e
 
 REPO="https://github.com/WanGXUUvU/OneMore_vibe-coding.git"
 TMP_DIR="$(mktemp -d)"
+CALLER_DIR="$PWD"
+export CALLER_DIR
 
 cleanup() { rm -rf "$TMP_DIR"; }
 trap cleanup EXIT
