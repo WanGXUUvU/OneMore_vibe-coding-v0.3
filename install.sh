@@ -16,4 +16,4 @@ git clone --depth 1 --quiet "$REPO" "$TMP_DIR"
 
 cd "$TMP_DIR"
 chmod +x generate.sh
-./generate.sh
+./generate.sh < /dev/tty
