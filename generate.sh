@@ -42,7 +42,7 @@ ask() {
   local prompt="$2"
   echo -e ""
   printf "  ${BOLD}❯${RESET} ${prompt} "
-  read -r "$var"
+  read -r "$var" < /dev/tty
 }
 
 # ─────────────────────────────────────────────
