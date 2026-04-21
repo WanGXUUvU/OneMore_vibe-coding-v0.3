@@ -48,15 +48,15 @@ ask() {
 # ─────────────────────────────────────────────
 # 头部 Banner
 # ─────────────────────────────────────────────
-if [[ -t 1 && -n "${TERM:-}" ]]; then
-  clear
-fi
-echo ""
-echo -e "  ${BOLD}${CYAN}╔══════════════════════════════════════════╗${RESET}"
-echo -e "  ${BOLD}${CYAN}║${RESET}  ${BOLD}🛠  Agent Skill 生成器${RESET}  ${DIM}v${VERSION}${RESET}  ${BOLD}${CYAN}║${RESET}"
-echo -e "  ${BOLD}${CYAN}╚══════════════════════════════════════════╝${RESET}"
-echo ""
-echo -e "  ${DIM}从 core-template 生成各平台 SKILL.md 文件（输出到 _internal/agent-skills）${RESET}"
+print_header() {
+  if [[ -t 1 && -n "${TERM:-}" ]]; then clear; fi
+  echo ""
+  echo -e "  ${BOLD}${CYAN}╔══════════════════════════════════════════╗${RESET}"
+  echo -e "  ${BOLD}${CYAN}║${RESET}  ${BOLD}🛠  Agent Skill 生成器${RESET}  ${DIM}v${VERSION}${RESET}  ${BOLD}${CYAN}║${RESET}"
+  echo -e "  ${BOLD}${CYAN}╚══════════════════════════════════════════╝${RESET}"
+  echo ""
+}
+print_header
 
 # ─────────────────────────────────────────────
 # 步骤 1 — 语言
@@ -81,6 +81,7 @@ esac
 # ─────────────────────────────────────────────
 # 步骤 2 — 平台
 # ─────────────────────────────────────────────
+print_header
 separator
 step "步骤 2 / 4  —  🤖  选择平台"
 echo ""
@@ -107,6 +108,7 @@ esac
 # ─────────────────────────────────────────────
 # 步骤 3 — 模式
 # ─────────────────────────────────────────────
+print_header
 separator
 step "步骤 3 / 4  —  ⚙️   选择生成模式"
 echo ""
@@ -128,6 +130,7 @@ esac
 # 步骤 4 — 安装（dry-run 时跳过）
 # ─────────────────────────────────────────────
 if ! $DRY_RUN; then
+  print_header
   separator
   step "步骤 4 / 4  —  📦  安装目标"
   echo ""
@@ -151,6 +154,7 @@ fi
 # ─────────────────────────────────────────────
 # 确认摘要
 # ─────────────────────────────────────────────
+print_header
 separator
 echo ""
 echo -e "  ${BOLD}📋  执行摘要${RESET}"
