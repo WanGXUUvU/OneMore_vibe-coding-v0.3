@@ -234,6 +234,14 @@ generate_platform() {
 
   $DRY_RUN || mkdir -p "$out_full/references" "$out_lite"
 
+  # 选择模板（有平台专用版优先使用，否则回退到通用版）
+  local full_tpl="$TEMPLATE_DIR/workflow-full${template_lang_suffix}.md.template"
+  local lite_tpl="$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.md.template"
+  [[ -f "$TEMPLATE_DIR/workflow-full${template_lang_suffix}.${id}.md.template" ]] && \
+    full_tpl="$TEMPLATE_DIR/workflow-full${template_lang_suffix}.${id}.md.template"
+  [[ -f "$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.${id}.md.template" ]] && \
+    lite_tpl="$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.${id}.md.template"
+
   # Full SKILL.md
   local full_content
   full_content="$(sed \
@@ -243,7 +251,7 @@ generate_platform() {
     -e "s|{{SKILL_FULL}}|$skill_full|g" \
     -e "s|{{SKILL_LITE}}|$skill_lite|g" \
     -e "s|{{VERSION}}|$VERSION|g" \
-    "$TEMPLATE_DIR/workflow-full${template_lang_suffix}.md.template")"
+    "$full_tpl")"
   write_file "$out_full/SKILL.md" "$full_content"
 
   # Lite SKILL.md
@@ -255,7 +263,7 @@ generate_platform() {
     -e "s|{{SKILL_FULL}}|$skill_full|g" \
     -e "s|{{SKILL_LITE}}|$skill_lite|g" \
     -e "s|{{VERSION}}|$VERSION|g" \
-    "$TEMPLATE_DIR/workflow-lite${template_lang_suffix}.md.template")"
+    "$lite_tpl")"
   write_file "$out_lite/SKILL.md" "$lite_content"
 
   # references（只有 full 版需要）
@@ -281,13 +289,13 @@ install_skills() {
     echo -e "\n  ${BOLD}安装到项目级${RESET}  ${DIM}$PWD${RESET}\n"
     local copilot_dir="$PWD/.github/skills"
     local claude_dir="$PWD/.claude/skills"
-    local codex_dir="$PWD/.codex/skills"
+    local codex_dir="$PWD/.agents/skills"
     local codebuddy_dir="$PWD/.codebuddy/skills"
   else
     echo -e "\n  ${BOLD}安装到用户级${RESET}  ${DIM}~/${RESET}\n"
     local copilot_dir="$HOME/.copilot/skills"
     local claude_dir="$HOME/.claude/skills"
-    local codex_dir="$HOME/.codex/skills"
+    local codex_dir="$HOME/.agents/skills"
     local codebuddy_dir="$HOME/.codebuddy/skills"
   fi
 
