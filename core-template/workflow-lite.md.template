@@ -11,10 +11,10 @@ Use this skill when {{PLATFORM_NAME}} should keep the workflow lightweight. It i
 
 ## When to Use
 
-- "轻量流程 / 简化流程 / 最小工作流"
-- "不要太多文档，先把功能做完"
-- "给我一套跨项目通用的简版流程"
-- "继续当前任务，但用精简模式"
+- "lightweight workflow / minimal workflow / simplified process"
+- "skip the heavy docs, just ship the feature"
+- "give me a lean cross-project workflow"
+- "continue the current task in lite mode"
 
 ## Repo Files
 

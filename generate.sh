@@ -88,7 +88,7 @@ echo -e "    ${BOLD}1)${RESET}  🌐  全部平台  ${DIM}(copilot + claude + co
 echo -e "    ${BOLD}2)${RESET}  🐙  GitHub Copilot"
 echo -e "    ${BOLD}3)${RESET}  🔶  Claude Code"
 echo -e "    ${BOLD}4)${RESET}  ✦   Codex"
-echo -e "    ${BOLD}5)${RESET}  💻  CodeBuddy"
+echo -e "    ${BOLD}5)${RESET}  💻  CodeBuddy  ${DIM}(固定使用中文模板，不受语言选择影响)${RESET}"
 echo -e "    ${DIM}0)  退出${RESET}"
 
 ask platform_choice "请输入编号 [0-5]："
@@ -342,6 +342,9 @@ generate_platform \
   "AGENTS.md" "# AGENTS.md" \
   "codex-native-project-workflow" "codex-native-lite-project-workflow"
 
+if [[ -z "$FILTER" || "$FILTER" == "codebuddy" ]]; then
+  [[ -n "$LANG_SUFFIX" ]] || warn "CodeBuddy 固定使用中文模板，语言选择（English）对此平台不生效"
+fi
 generate_platform \
   "codebuddy" "CodeBuddy" \
   "CODEBUDDY.md" "# CODEBUDDY.md" \
@@ -352,6 +355,34 @@ generate_platform \
 # 安装（可选）
 # ─────────────────────────────────────────────
 $DO_INSTALL && install_skills
+
+# ─────────────────────────────────────────────
+# 安装后清理（可选）
+# ─────────────────────────────────────────────
+if $DO_INSTALL && ! $DRY_RUN; then
+  separator
+  echo ""
+  echo -e "  ${BOLD}🗑   清理临时文件${RESET}"
+  echo ""
+  if [[ -n "$FILTER" ]]; then
+    echo -e "  ${DIM}将删除：${RESET}${BOLD}_internal/agent-skills/$FILTER/${RESET}"
+  else
+    echo -e "  ${DIM}将删除：${RESET}${BOLD}_internal/agent-skills/${RESET} 下所有已安装平台目录"
+  fi
+  echo ""
+  ask cleanup_choice "安装完成，是否删除 _internal/ 中对应的生成文件？[y/N]："
+  if [[ "$cleanup_choice" == "y" || "$cleanup_choice" == "Y" ]]; then
+    if [[ -n "$FILTER" ]]; then
+      rm -rf "$OUTPUT_DIR/$FILTER"
+      ok "已删除 _internal/agent-skills/$FILTER/"
+    else
+      rm -rf "$OUTPUT_DIR"
+      ok "已删除 _internal/agent-skills/"
+    fi
+  else
+    info "已跳过，生成文件保留在 _internal/agent-skills/ 中"
+  fi
+fi
 
 # ─────────────────────────────────────────────
 # 完成
