@@ -1,33 +1,32 @@
-
 # {{PLATFORM_NAME}} Native Lite Project Workflow（{{PLATFORM_NAME}} 原生轻量项目工作流）
 
 ## Overview（技能用途）
 
-本技能为 {{PLATFORM_NAME}} 的轻量项目工作流，用最少的文件和步骤完成交付，在保留任务卡和硬关卡的前提下，避免默认进入完整的仓库操作系统模式。
+本技能用于 bootstrap 一套可以依赖最小文件集持续运行的轻量工作流。它主要负责初始化或 re-bootstrap，不应该成为每次后续会话都必须显式重调的依赖。
 
 ## When to Use（触发规则）
 
-1. 用户提到"轻量流程 / 简化流程 / 最小工作流"时触发
-2. 用户说"不要太多文档，先把功能做完"时触发
-3. 用户说"给我一套跨项目通用的简版流程"时触发
-4. 用户说"继续当前任务，但用精简模式"时触发
+1. 用户提到“轻量流程 / 简化流程 / 最小工作流”时触发
+2. 用户说“不要太多文档，先把功能做完”时触发
+3. 用户说“给我一套跨项目通用的简版流程”时触发
+4. 用户说“先 bootstrap，后面靠文件继续”时触发
 5. 新项目启动，需要最小 TASK-000 头脑风暴步骤时触发
 6. 关键词匹配：轻量流程、简化流程、最小工作流、快速交付、精简模式、lite模式、TASK-000
 
 ## Repo Files（仓库文件）
 
-- `STATUS.md`
-- `specs/TASK-000.md` 在项目全新或范围不清时使用
-- `specs/TASK-001.md` 及后续任务卡
-- `specs/PATCH-TASK.md`
+- `STATUS.md`：当前阶段、当前任务、当前 gate、车道、阻塞项与下一步。初始格式参考 [references/status-template.md](references/status-template.md)。
+- `specs/TASK-000.md`：项目全新或范围不清时使用
+- `specs/TASK-001.md` 及后续任务卡：可执行任务
+- `specs/PATCH-TASK.md`：超小修补
 
 可选：
-- `SPEC.md` 仅当范围或边界不清时
-- `BUILD_PLAN.md` 仅用于里程碑级变更
+- `SPEC.md`：仅当范围或边界不清，且后续会话需要长期上下文时生成
+- `BUILD_PLAN.md`：仅用于里程碑级变更
 
 ## Persistent Project Instructions（持久化项目约束）
 
-在仓库内第一次有意义地调用本技能时，如果 `{{CONFIG_FILE}}` 不存在，就应主动创建它，让这套 lite workflow 在后续会话中作为默认方式持续生效。
+在仓库内第一次有意义地调用本技能时，如果 `{{CONFIG_FILE}}` 不存在，就应主动创建它，让这套 lite workflow 在后续会话中成为默认继续方式。
 
 保持 `{{CONFIG_FILE}}` 极简。它只应包含可长期保留的 workflow 默认值，不应强制每个任务都做重读文档、全仓扫描或套用泛化风格规则。
 
@@ -38,22 +37,37 @@
 
 ## Workflow Defaults
 
-- Use `specs/TASK-000.md` only when scope or done conditions are unclear.
-- In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
-- Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.
-- Prefer the smallest closed loop.
-- Stop at required gates before sync.
-- End implementation with `Verify` and `Review`.
-- Do not expand scope beyond the current task.
-- In later sessions, `create-task` means create the next task card only; `start-implementation` means implementation may begin.
+- 这是一个 bootstrap-first workflow。skill 主要用于初始化或 re-bootstrap，后续会话默认从仓库文件继续。
+- 只有当范围或完成条件不清楚时，才使用 `specs/TASK-000.md`。
+- 在后续会话中，先读 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡。
+- 只有当 `SPEC.md` 存在且相关时，才读取它。
+- 只有当 workflow 上下文缺失、任务需要重新界定范围时，才 re-bootstrap。
+- 优先保持最小闭环。
+- 在必需 gate 停下后再同步。
+- 以 `Verify` 和 `Review` 结束实现。
+- 不要扩展超出当前任务的范围。
+- `create-task` 表示只允许创建下一张任务卡；`start-implementation` 表示允许开始实现。
+- 每次通过任何 gate 后，立即更新 `STATUS.md`：设置 Phase、Task（文件路径）、Gate、Lane 和 Next action。在 `STATUS.md` 反映新状态之前，不得宣告 gate 已通过或实现完成。
 ```
 
 如果 `{{CONFIG_FILE}}` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关内容。
 除非用户明确要求，否则不要整体替换现有 `{{CONFIG_FILE}}`。
 
+## Continuation Contract（后续续跑约定）
+
+后续新对话默认按下面顺序启动：
+
+1. 读取 `{{CONFIG_FILE}}`
+2. 读取 `STATUS.md`
+3. 读取当前任务卡
+4. 只有当 `SPEC.md` 存在且相关时，再读取它
+5. 在采取动作前，先遵守 `STATUS.md` 里的当前 gate
+
+只有当 workflow 状态缺失、损坏或需要重新定义时，才重新调用本技能。
+
 ## Execution Flow（执行流程）
 
-按两阶段运行：
+本技能执行的是一个有边界的 bootstrap 闭环：
 
 1. Bootstrap session。
 用本技能初始化仓库、创建最小工作流文件，并完成 `TASK-000`，直到仓库进入 `Brainstorm Review`。
@@ -70,26 +84,11 @@
 5. `TASK-000` 被批准后，只能在得到明确建卡批准后，创建普通任务卡（`specs/TASK-xxx.md`）。
 不要把澄清性输入当成批准。`create-task` 代表允许创建 `TASK-001`。`start-implementation` 代表允许开始实现。
 
-6. `TASK-001` 创建后，用一个简短区块确认范围（`Goal / In Scope / Out of Scope`），并停在 `Implementation Approval`。
+6. `TASK-001` 创建后，用一个简短区块确认范围（`Goal / In Scope / Out of Scope`），设置 `STATUS.md` 的下一 gate，并停下。
 在用户明确给出实现批准前，不得开始实现。
 
-7. 以满足当前任务卡的最小闭环执行实现。
-不要扩范围，也不要顺手捆绑附近的小改动。
-
-8. 用 `Verify` 证据和简短 `Review` 说明收口。
-
-9. 在 `Sync Review` 等待用户确认。
-在 `Sync Review`，下一步必须明确为以下三选一：
-- 接受当前任务
-- 继续当前任务
-- 创建下一张任务卡
-不要把评审意见或澄清性追问视为 sync approval。
-
-## Capability Gate（能力门）
-
-- 如果子代理可用，只在它们能降低时间成本或风险时使用。
-- 如果子代理不可用，声明 `Single-agent serial fallback`。
-- 保持 planner、generator、evaluator、fixer 的职责边界。
+7. 后续实现会话应从文件继续，而不是从 skill 继续。
+正常下一次对话应从 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡恢复。
 
 ## Task Entry（任务入口）
 
@@ -117,10 +116,10 @@
 
 ## Gates（硬关卡）
 
-- 如果任务还不可执行，在实现前停在 `Brainstorm Review`。
-- 在任务卡准备好后、写代码前，停在 `Implementation Approval`。
-- 只有任务必须升级出正常 lite 执行范围时，才停在 `Plan Review`。
-- 在完成 verification 和 review 之后、同步里程碑文档之前，停在 `Sync Review`。
+- 如果任务还不可执行，在实现前停在 `Brainstorm Review`
+- 在任务卡准备好后、写代码前，停在 `Implementation Approval`
+- 只有任务必须升级出正常 lite 执行范围时，才停在 `Plan Review`
+- 在完成 verification 和 review 之后、同步里程碑文档之前，停在 `Sync Review`
 
 补充规则：
 - 关卡中的澄清输入不等于关卡批准
@@ -130,31 +129,26 @@
 
 ## Lane Policy（车道策略）
 
-- 默认使用 `Fast`。
-- 只有明确属于多步骤或跨文件工作时，才升级到 `Standard`。
-- 只有高风险或不可逆工作时，才升级到 `Strict`。
-- 如果任务本身不需要，不要主动引入更重的 lane。
+- 默认使用 `Fast`
+- 只有明确属于多步骤或跨文件工作时，才升级到 `Standard`
+- 只有高风险或不可逆工作时，才升级到 `Strict`
+- 如果任务本身不需要，不要主动引入更重的 lane
 
 ## Rules（硬规则）
 
-- 没有任务卡就不要开始编码。
-- 不要扩范围。
-- 不要跳过 verification。
-- 在 `Verify` 和 `Review` 之前不要宣告完成。
-- 只有里程碑级变化才更新 `BUILD_PLAN.md`。
-- 当项目从零开始或目标仍然模糊时，不要跳过 `TASK-000`。
-- 在新的 delivery session 中，优先从 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡继续，而不是重新跑 bootstrap。
-- 用户补充信息本身，不得自动视为通过下一关。
-- 在 `TASK-000` 期间，不要默认要求用户重写完整 brief，应只追问缺失字段。
-- 在 `TASK-000` 期间，如果用户回答仍不完整或不确定，应继续追问，而不是直接前进。
-- `Brainstorm Review` 之后，没有 `create-task` 或等价明确批准，不得创建 `TASK-001`。
-- 创建 `TASK-001` 后，必须先进入 `Implementation Approval`，等待明确开工批准。
-- `Brainstorm Review` 之后，没有 `start-implementation` 或等价明确批准，不得编辑实现文件或开始执行。
-- `Implementation Approval` 之后，没有 `start-implementation` 或等价明确批准，不得开始实现。
-- `Plan Review` 之后，没有 `start-implementation` 或等价明确批准，不得开始实现。
-- `Sync Review` 之后，没有明确 sync approval，不得同步里程碑文档或进入下一任务。
-- `Sync Review` 之后，只允许：接受当前任务、继续当前任务、或创建下一张任务卡。
-- 将 `proceed` 视为模糊词，并追问用户是要 `create-task` 还是 `start-implementation`。
+- 没有任务卡就不要开始编码
+- 不要扩范围
+- 不要跳过 verification
+- 在 `Verify` 和 `Review` 之前不要宣告完成
+- 只有里程碑级变化才更新 `BUILD_PLAN.md`
+- 当项目从零开始或目标仍然模糊时，不要跳过 `TASK-000`
+- 在新的 delivery session 中，优先从 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡继续，而不是重新跑 bootstrap
+- 用户补充信息本身，不得自动视为通过下一关
+- 在 `TASK-000` 期间，不要默认要求用户重写完整 brief，应只追问缺失字段
+- 在 `TASK-000` 期间，如果用户回答仍不完整或不确定，应继续追问，而不是直接前进
+- 未收到对应的明确批准信号，不得通过任何 gate：`create-task` 仅批准建卡；`start-implementation` 批准实现工作；明确 sync approval 才可通过 `Sync Review`。
+- `Sync Review` 之后，只允许：接受当前任务、继续当前任务、或创建下一张任务卡
+- 将 `proceed` 视为模糊词，并追问用户是要 `create-task` 还是 `start-implementation`
 
 ## Verify Minimum（最低验证要求）
 
@@ -171,15 +165,15 @@
 
 ## Quick Prompts（快捷指令）
 
-- 使用 `${{SKILL_LITE}}` 以精简模式引导仓库
-- 使用 `${{SKILL_LITE}}` 继续当前精简模式任务
-- 使用 `${{SKILL_LITE}}` 报告项目状态和下一步行动
+- 使用 `${{SKILL_LITE}}` bootstrap 一个最小流程仓库
+- 使用 `${{SKILL_LITE}}` 在最小文件缺失或漂移后 re-bootstrap lite workflow 状态
+- 从 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡继续当前任务
 - 使用 `create-task` 允许创建下一张任务卡但不立即开始实现
 - 使用 `start-implementation` 在任务卡准备好后批准开始实现
 
 ## Status Output（状态报告）
 
-当被问"现在到哪了"时，必须报告以下 6 项：
+当被问“现在到哪了”时，必须报告以下 6 项：
 
 1. **Current Phase** — 当前阶段
 2. **Current Task** — 当前任务

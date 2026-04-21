@@ -1,9 +1,8 @@
-
 # {{PLATFORM_NAME}} Native Project Workflow
 
 ## Overview
 
-Use this skill when {{PLATFORM_NAME}} should run a full repo operating system. It turns a vague request into explicit project docs, task cards, lane selection, and gated execution.
+Use this skill to bootstrap a durable project operating model. The skill is for initialization and re-bootstrap, not for every later session. After bootstrap, future conversations should continue from the repo files rather than by re-calling the skill.
 
 ## When to Use
 
@@ -16,17 +15,17 @@ Use this skill when {{PLATFORM_NAME}} should run a full repo operating system. I
 
 Create or maintain these files at repo root unless the repo already has an equivalent structure:
 
-- `SPEC.md`
-- `DECISIONS.md`
-- `BUILD_PLAN.md`
-- `STATUS.md`
-- `specs/TASK-000.md` for startup and brainstorming
-- `specs/TASK-001.md` and onward for normal tasks
+- `SPEC.md` for durable problem framing and scope
+- `DECISIONS.md` for major decisions and rationale
+- `BUILD_PLAN.md` for milestone-level planning only
+- `STATUS.md` for canonical current project state, gate, and next action. Use [references/status-template.md](references/status-template.md) as the initial format.
+- `specs/TASK-000.md` for bootstrap brainstorming
+- `specs/TASK-001.md` and onward for executable work
 - `specs/PATCH-TASK.md` for very small fixes
 
 ## Persistent Project Instructions
 
-On the first meaningful invocation in a repository, create `{{CONFIG_FILE}}` if it does not already exist so the workflow persists for later {{PLATFORM_NAME}} sessions.
+On the first meaningful invocation in a repository, create `{{CONFIG_FILE}}` if it does not already exist so the continuation rules persist for later {{PLATFORM_NAME}} sessions.
 
 Keep `{{CONFIG_FILE}}` minimal. It is a persistent memory file, not a second copy of the skill. Do not add generic coding advice, style slogans, or instructions that trigger expensive work on every task.
 
@@ -37,13 +36,16 @@ If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflo
 
 ## Workflow Defaults
 
-- Read `STATUS.md` and the current task card first; when bootstrapping or when scope is unclear, also read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md`.
-- Use `specs/TASK-000.md` when the task is not yet executable or when the project still needs its first durable docs.
+- This workflow is bootstrap-first. Use the skill for initialization or re-bootstrap, then continue later sessions from repo files.
+- In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
+- Read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md` when planning or scope decisions depend on them.
+- Use `specs/TASK-000.md` when the task is not yet executable or the workflow state must be rebuilt.
 - Use the smallest valid lane: `Fast`, `Standard`, or `Strict`.
-- Stop at required gates: `Brainstorm Review`, `Plan Review`, `Sync Review`.
+- Stop at required gates: `Brainstorm Review`, `Plan Review`, `Implementation Approval`, `Sync Review`.
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task card.
 - `create-task` means create the next task card only; `start-implementation` means implementation may begin.
+- After any gate is passed, immediately update `STATUS.md`: set Phase, Task (file path), Gate, Lane, and Next action. Do not declare a gate passed or implementation done before `STATUS.md` reflects the new state.
 ```
 
 If `{{CONFIG_FILE}}` already exists, update or append only the `## Workflow Defaults` section without replacing unrelated repository instructions.
@@ -53,20 +55,29 @@ When the full workflow bootstraps a new repo, seed `DECISIONS.md` and `BUILD_PLA
 Use [references/decisions-template.md](references/decisions-template.md) for the initial `DECISIONS.md`.
 Use [references/build-plan-template.md](references/build-plan-template.md) for the initial `BUILD_PLAN.md`.
 
+## Continuation Contract
+
+For normal future conversations, do this startup sequence by default:
+
+1. Read `{{CONFIG_FILE}}`.
+2. Read `STATUS.md`.
+3. Read the current task card.
+4. Read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md` only when planning, scope, or milestone decisions depend on them.
+5. Respect the current gate in `STATUS.md` before taking action.
+
+Re-use this skill only when workflow state is missing, corrupted, or needs to be redefined.
+
 ## Execution Flow
 
-Follow this loop:
+Use this skill for a bounded bootstrap loop:
 
 1. Read the current repo state.
 Read the workflow files first, then the current task card.
 
-2. Do a capability gate.
-Decide whether parallel helpers or subagents are available. If not, declare `Single-agent serial fallback` and continue.
-
-3. Start with brainstorming when the task is not yet executable.
+2. Start with brainstorming when the task is not yet executable.
 Use `specs/TASK-000.md` when the project starts from a vague idea, when root docs are missing, or when the current task lacks a clear goal, scope, or done conditions.
 
-4. Use the fixed brainstorming structure.
+3. Use the fixed brainstorming structure.
 Capture these six items in order:
 - `项目名称 + 目标`
 - `现状与背景`
@@ -76,43 +87,34 @@ Capture these six items in order:
 - `Done when`
 Drive `TASK-000` by targeted follow-up questions. Do not ask the user to replace the whole brief when only some decisions are missing.
 
-5. Turn brainstorming into repo docs.
+4. Turn brainstorming into durable repo docs.
 Update:
 - `SPEC.md` with the six-part structure
 - `DECISIONS.md` with the first important tradeoffs, using the template above
 - `BUILD_PLAN.md` with at least `M1`, using the template above
 - `STATUS.md` with the current phase, gate, lane, and notes
 
-6. Stop at `Brainstorm Review`.
+5. Stop at `Brainstorm Review`.
 After `TASK-000` is good enough to produce a real implementation task, stop and wait for explicit user confirmation before continuing. Clarifying input does not by itself authorize `TASK-001`. `create-task` approves creating `TASK-001`. `start-implementation` approves implementation work.
 
-7. Run normal task execution.
+6. Create the first executable task card.
 For `TASK-001+`, always fill:
 - `Brainstorm Summary`
 - `Lane Decision`
 - `Plan Gate`
 
-8. Choose the lane.
+7. Choose the lane.
 - `Fast`: small, low-risk work; `generator -> evaluator`
 - `Standard`: multi-step or cross-file work; `planner -> Plan Review -> generator -> evaluator`
 - `Strict`: irreversible or high-risk work; `planner -> Plan Review -> generator -> evaluator -> (fixer -> evaluator)`
 
 Use `Standard` only when the environment supports it and the task needs an explicit plan. Use `Strict` for migrations, destructive changes, external integration verification, or broad multi-module edits.
 
-9. After the task card and lane decision are ready, stop at `Implementation Approval`.
+8. After `TASK-001` and the lane decision are ready, set `STATUS.md` to the next gate and stop.
 Do not start implementation until the user explicitly approves execution. For `Standard` and `Strict`, this approval comes after `Plan Review`.
 
-10. Do not close without review.
-Every implementation task must end with:
-- `Verify`
-- `Review`
-
-11. Stop at `Sync Review`, then sync.
-After presenting results, wait for explicit user confirmation before updating milestone documents or moving to the next task.
-At `Sync Review`, the next move must be explicit:
-- close the current task as accepted
-- keep working inside the current task
-- or create the next task card
+9. Future implementation sessions continue from files, not from the skill.
+The normal next conversation should resume from `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card.
 
 ## Gates
 
@@ -126,12 +128,6 @@ User clarification at a gate is not the same as gate approval.
 - `start-implementation` passes the current gate for implementation work.
 - Do not treat `proceed` as implementation approval.
 
-## Lane Policy
-
-- `Fast`: small, low-risk work; `generator -> evaluator`
-- `Standard`: multi-step or cross-file work; `planner -> Plan Review -> generator -> evaluator`
-- `Strict`: irreversible or high-risk work; `planner -> Plan Review -> generator -> evaluator -> (fixer -> evaluator)`
-
 ## Hard Rules
 
 - Do not code without a task card.
@@ -142,20 +138,15 @@ User clarification at a gate is not the same as gate approval.
 - User clarification does not by itself authorize the next gate.
 - During `TASK-000`, do not ask for a full replacement brief by default. Ask structured follow-up questions based on the missing fields.
 - During `TASK-000`, if the user answer is incomplete or uncertain, continue the follow-up loop instead of moving on.
-- After `Brainstorm Review`, do not create `TASK-001` without `create-task` or equivalent explicit task-card approval.
-- After `TASK-001` is created, move to `Implementation Approval` and wait there until implementation is explicitly approved.
-- After `Brainstorm Review`, do not edit implementation files or start execution without `start-implementation` or equivalent explicit implementation approval.
-- After `Implementation Approval`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
-- After `Plan Review`, do not start implementation without `start-implementation` or equivalent explicit implementation approval.
-- After `Sync Review`, do not sync milestone docs or advance to the next task without explicit sync approval.
+- Do not pass any gate without the corresponding explicit approval signal: `create-task` approves task creation only; `start-implementation` approves implementation work; explicit sync approval advances past `Sync Review`.
 - After `Sync Review`, the allowed next moves are: accept the task, continue the same task, or create the next task card.
 - Treat `proceed` as ambiguous. Ask whether the user wants `create-task` or `start-implementation`.
 
 ## Quick Prompts
 
 - `Use ${{SKILL_FULL}} to bootstrap this repo from a vague product idea.`
-- `Use ${{SKILL_FULL}} to continue the current task and choose the right lane.`
-- `Use ${{SKILL_FULL}} to review the repo state, update STATUS, and prepare the next task.`
+- `Use ${{SKILL_FULL}} to re-bootstrap workflow state after the repo docs drifted or went missing.`
+- `Continue this project from {{CONFIG_FILE}}, STATUS.md, and the current task card.`
 - `Use create-task to approve creating the next task card without starting implementation.`
 - `Use start-implementation to approve implementation after the task card and plan are ready.`
 

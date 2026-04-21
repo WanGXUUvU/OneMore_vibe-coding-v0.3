@@ -308,7 +308,7 @@ generate_platform() {
   local out_full="$OUTPUT_DIR/$id/$skill_full"
   local out_lite="$OUTPUT_DIR/$id/$skill_lite"
 
-  $DRY_RUN || mkdir -p "$out_full/references" "$out_lite"
+  $DRY_RUN || mkdir -p "$out_full/references" "$out_lite/references"
 
   # 选择 frontmatter 文件（平台专用，优先 zh 版，否则 en 版）
   local fm_full fm_lite
@@ -343,12 +343,15 @@ generate_platform() {
   lite_content="$(cat <(render "$fm_lite") <(render "$body_lite"))"
   write_file "$out_lite/SKILL.md" "$lite_content"
 
-  # references（只有 full 版需要）
+  # references（full 全套，lite 只复制 status-template）
   if $DRY_RUN; then
     dry "references/ → $out_full/references/"
+    dry "references/status-template.md → $out_lite/references/"
   else
     cp "$TEMPLATE_DIR/references/build-plan-template.md" "$out_full/references/"
     cp "$TEMPLATE_DIR/references/decisions-template.md"  "$out_full/references/"
+    cp "$TEMPLATE_DIR/references/status-template.md"     "$out_full/references/"
+    cp "$TEMPLATE_DIR/references/status-template.md"     "$out_lite/references/"
   fi
 
   ok "📄  ${skill_full}/SKILL.md"
@@ -496,6 +499,7 @@ else
   [[ -z "$FILTER" || "$FILTER" == "codebuddy" ]] && _platforms+=(codebuddy)
   _pcount=${#_platforms[@]}
   _count=$(( _pcount * 2 ))
-  echo -e "  ${GREEN}${BOLD}🎉  完成！${RESET}  ${DIM}版本 ${VERSION} · ${_count} 个 SKILL.md + ${_pcount} 套 references/${RESET}"
+  _rcount=$(( _pcount * 2 ))
+  echo -e "  ${GREEN}${BOLD}🎉  完成！${RESET}  ${DIM}版本 ${VERSION} · ${_count} 个 SKILL.md + ${_rcount} 套 references/${RESET}"
 fi
 echo ""

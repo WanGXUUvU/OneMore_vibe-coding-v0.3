@@ -36,8 +36,4 @@
 
 ## Runtime Amendments
 
-> Append only when a later task changes an earlier decision.
-
-| TASK | Original | Revision | Reason |
-|------|----------|----------|--------|
-| — | — | — | — |
+> Append only when a later task changes an earlier decision. Add a short note below; no table required.
