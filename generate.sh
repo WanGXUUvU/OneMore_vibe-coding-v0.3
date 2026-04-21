@@ -361,26 +361,13 @@ $DO_INSTALL && install_skills
 # ─────────────────────────────────────────────
 if $DO_INSTALL && ! $DRY_RUN; then
   separator
-  echo ""
-  echo -e "  ${BOLD}🗑   清理临时文件${RESET}"
-  echo ""
-  if [[ -n "$FILTER" ]]; then
-    echo -e "  ${DIM}将删除：${RESET}${BOLD}_internal/agent-skills/$FILTER/${RESET}"
-  else
-    echo -e "  ${DIM}将删除：${RESET}${BOLD}_internal/agent-skills/${RESET} 下所有已安装平台目录"
-  fi
-  echo ""
-  ask cleanup_choice "安装完成，是否删除 _internal/ 中对应的生成文件？[y/N]："
+  ask cleanup_choice "是否删除 core-template/ 和 generate.sh？[y/N]："
   if [[ "$cleanup_choice" == "y" || "$cleanup_choice" == "Y" ]]; then
-    if [[ -n "$FILTER" ]]; then
-      rm -rf "$OUTPUT_DIR/$FILTER"
-      ok "已删除 _internal/agent-skills/$FILTER/"
-    else
-      rm -rf "$OUTPUT_DIR"
-      ok "已删除 _internal/agent-skills/"
-    fi
+    rm -rf "$TEMPLATE_DIR"
+    rm -f "$SCRIPT_DIR/generate.sh"
+    ok "已删除 core-template/ 和 generate.sh"
   else
-    info "已跳过，生成文件保留在 _internal/agent-skills/ 中"
+    info "已跳过，源文件保留"
   fi
 fi
 
