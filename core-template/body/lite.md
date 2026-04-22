@@ -36,10 +36,10 @@ If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflo
 
 ## Workflow Defaults
 
-- This workflow is bootstrap-first. Use the skill for initialization or re-bootstrap, then continue later sessions from repo files.
 - Use `specs/TASK-000.md` only when scope or done conditions are unclear.
 - In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
 - Read `SPEC.md` only if it exists and the extra context is relevant.
+- Read `BUILD_PLAN.md` only if it exists and milestone context is relevant.
 - Re-bootstrap workflow guidance only when workflow context is missing or the task needs re-scoping.
 - Prefer the smallest closed loop.
 - Stop at required gates before sync.

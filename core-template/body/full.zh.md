@@ -38,7 +38,6 @@
 
 ## Workflow Defaults
 
-- 这是一个 bootstrap-first workflow。skill 主要用于初始化或 re-bootstrap，后续会话默认从仓库文件继续。
 - 在后续会话中，先读 `{{CONFIG_FILE}}`、`STATUS.md` 和当前任务卡。
 - 只有当规划、范围或里程碑判断依赖它们时，才读 `SPEC.md`、`DECISIONS.md` 和 `BUILD_PLAN.md`。
 - 当任务还不可执行，或 workflow 状态需要重建时，使用 `specs/TASK-000.md`。

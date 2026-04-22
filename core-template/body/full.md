@@ -36,7 +36,6 @@ If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflo
 
 ## Workflow Defaults
 
-- This workflow is bootstrap-first. Use the skill for initialization or re-bootstrap, then continue later sessions from repo files.
 - In later sessions, read `{{CONFIG_FILE}}`, `STATUS.md`, and the current task card first.
 - Read `SPEC.md`, `DECISIONS.md`, and `BUILD_PLAN.md` when planning or scope decisions depend on them.
 - Use `specs/TASK-000.md` when the task is not yet executable or the workflow state must be rebuilt.
