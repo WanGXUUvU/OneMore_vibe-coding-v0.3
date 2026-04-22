@@ -13,7 +13,7 @@ Use this skill to bootstrap a lightweight workflow that can keep running from a 
 
 ## Repo Files
 
-- `STATUS.md` for current phase, task, gate, lane, blockers, and next action. Use [references/status-template.md](references/status-template.md) as the initial format.
+- `STATUS.md` for the current phase, task, gate, what is allowed now, blockers, and next action. `Lane` is optional helper context only. Use [references/status-template.md](references/status-template.md) as the initial format.
 - `specs/TASK-000.md` when the project is new or scope is unclear
 - `specs/TASK-001.md` and onward for executable work
 - `specs/PATCH-TASK.md` for very small fixes
@@ -46,7 +46,7 @@ If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflo
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task.
 - `create-task` means create the next task card only; `start-implementation` means implementation may begin.
-- After any gate is passed, immediately update `STATUS.md`: set Phase, Task (file path), Gate, Lane, and Next action. Do not declare a gate passed or implementation done before `STATUS.md` reflects the new state.
+- After any gate is passed, immediately update `STATUS.md`: set Phase, Task (file path), Gate, Allowed Now, and Next action. Set `Lane` only when it adds useful context. Do not declare a gate passed or implementation done before `STATUS.md` reflects the new state.
 ```
 
 If the file already exists, update or append only the `## Workflow Defaults` section without removing unrelated instructions.
@@ -110,7 +110,7 @@ The normal next conversation should resume from `{{CONFIG_FILE}}`, `STATUS.md`, 
 - Prefer 1 to 5 short questions per round. Ask only for information that is still missing or uncertain.
 - If the user gives a partial answer, update `TASK-000`, then continue asking only about the remaining gaps.
 - Keep asking until the task can enter `Brainstorm Review` without guessing core scope, stack, or done conditions.
-- Update `STATUS.md`, and update `SPEC.md` only when the extra detail materially helps later sessions.
+- Update `STATUS.md` so a new session can continue from files alone, and update `SPEC.md` only when the extra detail materially helps later sessions.
 - Stop at `Brainstorm Review` once the repo has enough information to create `TASK-001` without guessing core scope or stack.
 
 ## Gates
@@ -175,6 +175,8 @@ Whenever asked "where are we now", report exactly:
 1. Current Phase
 2. Current Task
 3. Current Gate
-4. Selected Lane
+4. Allowed Now
 5. Blocking issue (or None)
 6. Next action
+
+If `Selected Lane` exists, treat it as optional helper context rather than the main instruction source.

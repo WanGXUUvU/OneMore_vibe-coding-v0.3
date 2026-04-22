@@ -15,7 +15,7 @@
 
 ## Repo Files（仓库文件）
 
-- `STATUS.md`：当前阶段、当前任务、当前 gate、车道、阻塞项与下一步。初始格式参考 [references/status-template.md](references/status-template.md)。
+- `STATUS.md`：当前阶段、当前任务、当前 gate、当前允许动作、阻塞项与下一步。`Lane` 只是可选辅助信息，不是主指挥字段。初始格式参考 [references/status-template.md](references/status-template.md)。
 - `specs/TASK-000.md`：项目全新或范围不清时使用
 - `specs/TASK-001.md` 及后续任务卡：可执行任务
 - `specs/PATCH-TASK.md`：超小修补
@@ -47,7 +47,7 @@
 - 以 `Verify` 和 `Review` 结束实现。
 - 不要扩展超出当前任务的范围。
 - `create-task` 表示只允许创建下一张任务卡；`start-implementation` 表示允许开始实现。
-- 每次通过任何 gate 后，立即更新 `STATUS.md`：设置 Phase、Task（文件路径）、Gate、Lane 和 Next action。在 `STATUS.md` 反映新状态之前，不得宣告 gate 已通过或实现完成。
+- 每次通过任何 gate 后，立即更新 `STATUS.md`：设置 Phase、Task（文件路径）、Gate、Allowed Now 和 Next action。只有当 `Lane` 确实有额外价值时才写它。在 `STATUS.md` 反映新状态之前，不得宣告 gate 已通过或实现完成。
 ```
 
 如果 `{{CONFIG_FILE}}` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关内容。
@@ -111,7 +111,7 @@
 - 每轮优先只问 1 到 5 个短问题，只问仍然缺失或不确定的信息。
 - 如果用户只回答一部分，就先更新 `TASK-000`，再继续追问剩余缺口。
 - 只要核心范围、技术方向或完成标准还需要猜测，就继续追问，不进入下一步。
-- 更新 `STATUS.md`；只有当额外细节对后续会话确有帮助时，才更新 `SPEC.md`。
+- 更新 `STATUS.md`，确保一个全新会话也能只靠文件继续；只有当额外细节对后续会话确有帮助时，才更新 `SPEC.md`。
 - 当仓库已有足够信息在不猜测核心范围或技术栈的情况下创建 `TASK-001` 时，停在 `Brainstorm Review`。
 
 ## Gates（硬关卡）
@@ -178,6 +178,8 @@
 1. **Current Phase** — 当前阶段
 2. **Current Task** — 当前任务
 3. **Current Gate** — 当前关卡
-4. **Selected Lane** — 选择的车道
+4. **Allowed Now** — 当前允许动作
 5. **Blocking Issue** — 阻塞问题（或 None）
 6. **Next Action** — 下一步行动
+
+如果存在 `Selected Lane`，只把它当作辅助上下文，而不是主指挥信息。

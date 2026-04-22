@@ -18,7 +18,7 @@ Create or maintain these files at repo root unless the repo already has an equiv
 - `SPEC.md` for durable problem framing and scope
 - `DECISIONS.md` for major decisions and rationale
 - `BUILD_PLAN.md` for milestone-level planning only
-- `STATUS.md` for canonical current project state, gate, and next action. Use [references/status-template.md](references/status-template.md) as the initial format.
+- `STATUS.md` for canonical current project state, gate, what is allowed now, and next action. `Lane` is optional helper context only. Use [references/status-template.md](references/status-template.md) as the initial format.
 - `specs/TASK-000.md` for bootstrap brainstorming
 - `specs/TASK-001.md` and onward for executable work
 - `specs/PATCH-TASK.md` for very small fixes
@@ -44,7 +44,7 @@ If `{{CONFIG_FILE}}` does not exist, create it with exactly this compact workflo
 - End implementation with `Verify` and `Review`.
 - Do not expand scope beyond the current task card.
 - `create-task` means create the next task card only; `start-implementation` means implementation may begin.
-- After any gate is passed, immediately update `STATUS.md`: set Phase, Task (file path), Gate, Lane, and Next action. Do not declare a gate passed or implementation done before `STATUS.md` reflects the new state.
+- After any gate is passed, immediately update `STATUS.md`: set Phase, Task (file path), Gate, Allowed Now, and Next action. Set `Lane` only when it adds useful context. Do not declare a gate passed or implementation done before `STATUS.md` reflects the new state.
 ```
 
 If `{{CONFIG_FILE}}` already exists, update or append only the `## Workflow Defaults` section without replacing unrelated repository instructions.
@@ -91,7 +91,7 @@ Update:
 - `SPEC.md` with the six-part structure
 - `DECISIONS.md` with the first important tradeoffs, using the template above
 - `BUILD_PLAN.md` with at least `M1`, using the template above
-- `STATUS.md` with the current phase, gate, lane, and notes
+- `STATUS.md` with the current phase, gate, allowed action, optional lane, and notes
 
 5. Stop at `Brainstorm Review`.
 After `TASK-000` is good enough to produce a real implementation task, stop and wait for explicit user confirmation before continuing. Clarifying input does not by itself authorize `TASK-001`. `create-task` approves creating `TASK-001`. `start-implementation` approves implementation work.
@@ -155,6 +155,8 @@ Whenever asked "where are we now", report exactly:
 1. Current Phase
 2. Current Task
 3. Current Gate
-4. Selected Lane
+4. Allowed Now
 5. Blocking issue (or None)
 6. Next action
+
+If `Selected Lane` exists, treat it as optional helper context rather than the main instruction source.
