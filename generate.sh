@@ -346,11 +346,12 @@ generate_platform() {
   # references（full 全套，lite 只复制 status-template）
   if $DRY_RUN; then
     dry "references/ → $out_full/references/"
+    dry "references/status-template.full.md → $out_full/references/status-template.md"
     dry "references/status-template.md → $out_lite/references/"
   else
     cp "$TEMPLATE_DIR/references/build-plan-template.md" "$out_full/references/"
     cp "$TEMPLATE_DIR/references/decisions-template.md"  "$out_full/references/"
-    cp "$TEMPLATE_DIR/references/status-template.md"     "$out_full/references/"
+    cp "$TEMPLATE_DIR/references/status-template.full.md" "$out_full/references/status-template.md"
     cp "$TEMPLATE_DIR/references/status-template.md"     "$out_lite/references/"
   fi
 

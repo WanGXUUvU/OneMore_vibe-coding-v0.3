@@ -20,7 +20,7 @@
 - `SPEC.md`：长期保留的问题定义与范围
 - `DECISIONS.md`：关键决策与取舍理由
 - `BUILD_PLAN.md`：仅记录里程碑级计划
-- `STATUS.md`：当前项目状态、当前 gate、当前允许动作与下一步。`Lane` 只是可选辅助信息，不是主指挥字段。初始格式参考 [references/status-template.md](references/status-template.md)。
+- `STATUS.md`：当前项目状态、当前 gate、当前允许动作、当前里程碑与下一步。`Lane` 只是可选辅助信息，不是主指挥字段。初始格式参考 [references/status-template.md](references/status-template.md)。
 - `specs/TASK-000.md`：bootstrap 头脑风暴
 - `specs/TASK-001.md` 及后续任务卡：可执行任务
 - `specs/PATCH-TASK.md`：超小修补
@@ -46,7 +46,7 @@
 - 以 `Verify` 和 `Review` 结束实现。
 - 不要扩展超出当前任务卡的范围。
 - `create-task` 表示只允许创建下一张任务卡；`start-implementation` 表示允许开始实现。
-- 每次通过任何 gate 后，立即更新 `STATUS.md`：设置 Phase、Task（文件路径）、Gate、Allowed Now 和 Next action。只有当 `Lane` 确实有额外价值时才写它。在 `STATUS.md` 反映新状态之前，不得宣告 gate 已通过或实现完成。
+- 每次通过任何 gate 后，立即更新 `STATUS.md`：设置 Phase、Task（文件路径）、Gate、Allowed Now、Milestone 和 Next action。只有当 `Lane` 确实有额外价值时才写它。在 `STATUS.md` 反映新状态之前，不得宣告 gate 已通过或实现完成。
 ```
 
 如果 `{{CONFIG_FILE}}` 已存在，只更新或追加 `## Workflow Defaults` 这一段，而不是覆盖无关项目规则。
@@ -91,7 +91,7 @@
 - `SPEC.md` 写入六段结构
 - `DECISIONS.md` 记录首轮关键取舍，使用上面的模板
 - `BUILD_PLAN.md` 至少补到 `M1`，使用上面的模板
-- `STATUS.md` 更新当前阶段、关卡、当前允许动作、可选车道与说明
+- `STATUS.md` 更新当前阶段、关卡、当前允许动作、当前里程碑、可选车道与说明
 
 5. 停在 `Brainstorm Review`。
 当 `TASK-000` 已足够生成真实任务卡时，停下并等待用户明确确认。澄清性输入本身不等于批准下一步。`create-task` 代表允许创建 `TASK-001`。`start-implementation` 代表允许开始实现。
@@ -162,8 +162,9 @@
 1. Current Phase
 2. Current Task
 3. Current Gate
-4. Allowed Now
-5. Blocking issue（或 None）
-6. Next action
+4. Current Milestone
+5. Allowed Now
+6. Blocking issue（或 None）
+7. Next action
 
 如果存在 `Selected Lane`，只把它当作辅助上下文，而不是主指挥信息。
